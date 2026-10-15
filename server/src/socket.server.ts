@@ -6,6 +6,21 @@ import mongoose from "mongoose";
 
 let io: Server | null = null;
 
+/**
+ * Normalize the frontend origin.
+ * Removes whitespace and trailing slashes from CLIENT_URL.
+ */
+function getAllowedOrigin(): string {
+  return (
+    process.env.CLIENT_URL || "http://localhost:5173"
+  )
+    .trim()
+    .replace(/\/+$/, "");
+}
+
+/**
+ * Authenticate Socket.IO connections using the JWT cookie.
+ */
 function authenticateSocket(socket: Socket): string | null {
   const cookieHeader = socket.handshake.headers.cookie;
   const secret = process.env.JWT_SECRET;
@@ -44,13 +59,23 @@ function authenticateSocket(socket: Socket): string | null {
   }
 }
 
-export function initSocketServer(httpServer: HttpServer): Server {
-  if (io) return io;
+/**
+ * Initialize the Socket.IO server.
+ */
+export function initSocketServer(
+  httpServer: HttpServer,
+): Server {
+  if (io) {
+    return io;
+  }
+
+  const allowedOrigin = getAllowedOrigin();
 
   io = new Server(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL ?? "http://localhost:5173",
+      origin: allowedOrigin,
       credentials: true,
+      methods: ["GET", "POST"],
     },
   });
 
@@ -73,22 +98,36 @@ export function initSocketServer(httpServer: HttpServer): Server {
 
     console.log(`[Socket] Connected: ${userId}`);
 
-    socket.on("disconnect", () => {
-      console.log(`[Socket] Disconnected: ${userId}`);
+    socket.on("disconnect", (reason) => {
+      console.log(
+        `[Socket] Disconnected: ${userId}. Reason: ${reason}`,
+      );
     });
   });
+
+  console.log(
+    `[Socket] Server initialized. Allowed origin: ${allowedOrigin}`,
+  );
 
   return io;
 }
 
+/**
+ * Get the initialized Socket.IO server instance.
+ */
 export function getSocketServer(): Server {
   if (!io) {
-    throw new Error("Socket.IO server has not been initialized");
+    throw new Error(
+      "Socket.IO server has not been initialized",
+    );
   }
 
   return io;
 }
 
+/**
+ * Send a notification to a specific user's connected sockets.
+ */
 export function emitNotificationToUser(
   userId: string,
   notification: unknown,
@@ -98,5 +137,8 @@ export function emitNotificationToUser(
     return;
   }
 
-  io.to(`user:${userId}`).emit("notification:new", notification);
+  io.to(`user:${userId}`).emit(
+    "notification:new",
+    notification,
+  );
 }

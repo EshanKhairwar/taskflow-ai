@@ -1,0 +1,28 @@
+
+@import "tailwindcss";
+
+
+/* Allow the document to grow beyond the browser viewport so lower content
+   remains reachable above the Windows taskbar with normal page scrolling. */
+html,
+body,
+#root {
+  min-height: 100%;
+  height: auto;
+}
+
+html {
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#root {
+  min-height: 100vh;
+}

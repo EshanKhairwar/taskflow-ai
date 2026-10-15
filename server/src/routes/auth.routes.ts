@@ -75,10 +75,12 @@ function issueSession(userId: string, res: Response) {
     expiresIn: "1d",
   });
 
+  const isProduction = process.env.NODE_ENV === "production";
+
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     path: "/",
     maxAge: 24 * 60 * 60 * 1000,
   });
@@ -415,11 +417,14 @@ router.patch(
 // LOGOUT - POST /api/v1/auth/logout
 // --------------------------------------------------
 
+
 router.post("/logout", (_req, res) => {
+  const isProduction = process.env.NODE_ENV === "production";
+
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     path: "/",
   });
 
@@ -427,5 +432,6 @@ router.post("/logout", (_req, res) => {
     message: "Logged out successfully",
   });
 });
+
 
 export default router;

@@ -1,4 +1,3 @@
-
 import { Router, type Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -60,7 +59,7 @@ const profileSchema = z
   );
 
 // --------------------------------------------------
-// Helpers
+// Authentication helpers
 // --------------------------------------------------
 
 function issueSession(userId: string, res: Response) {
@@ -70,12 +69,12 @@ function issueSession(userId: string, res: Response) {
     throw new Error("JWT_SECRET is missing");
   }
 
+  const isProduction = process.env.NODE_ENV === "production";
+
   const token = jwt.sign({}, secret, {
     subject: userId,
     expiresIn: "1d",
   });
-
-  const isProduction = process.env.NODE_ENV === "production";
 
   res.cookie("token", token, {
     httpOnly: true,
@@ -99,6 +98,10 @@ function serializeUser(user: {
     avatarUrl: user.avatarUrl || "",
   };
 }
+
+// --------------------------------------------------
+// Avatar helpers
+// --------------------------------------------------
 
 function isAllowedAvatarDataUrl(value: string) {
   return /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(
@@ -353,8 +356,6 @@ router.patch(
         }
 
         try {
-          // Signed server-side upload.
-          // Intentionally omit upload_preset for this diagnostic test.
           const result = await cloudinary.uploader.upload(
             avatarDataUrl,
             {
@@ -417,7 +418,6 @@ router.patch(
 // LOGOUT - POST /api/v1/auth/logout
 // --------------------------------------------------
 
-
 router.post("/logout", (_req, res) => {
   const isProduction = process.env.NODE_ENV === "production";
 
@@ -432,6 +432,5 @@ router.post("/logout", (_req, res) => {
     message: "Logged out successfully",
   });
 });
-
 
 export default router;

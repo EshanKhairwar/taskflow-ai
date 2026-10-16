@@ -6,6 +6,7 @@ import Project from "../models/Project.js";
 import User from "../models/User.js";
 import * as TaskModule from "../models/Task.js";
 import { authenticate, type AuthRequest } from "../middleware/authenticate.js";
+import { logActivity } from "../services/activity.service.js";
 
 const router = Router({ mergeParams: true });
 
@@ -74,7 +75,7 @@ router.get("/", authenticate, async (req, res, next) => {
     const users = await User.find({
       _id: { $in: [...memberIds] },
     })
-      .select("name email avatar")
+      .select("name email avatarUrl")
       .lean();
 
     const roleById = new Map<string, string>();
@@ -89,7 +90,7 @@ router.get("/", authenticate, async (req, res, next) => {
         id: user._id.toString(),
         name: user.name,
         email: user.email,
-        avatar: user.avatar ?? "",
+        avatar: user.avatarUrl ?? "",
         role: roleById.get(user._id.toString()) ?? "member",
         isOwner: user._id.toString() === project.owner.toString(),
       })),
@@ -149,7 +150,7 @@ router.post("/", authenticate, async (req, res, next) => {
     const email = parsed.data.email.toLowerCase();
 
     const user = await User.findOne({ email })
-      .select("name email avatar")
+      .select("name email avatarUrl")
       .lean();
 
     if (!user) {
@@ -178,6 +179,20 @@ router.post("/", authenticate, async (req, res, next) => {
     } as any);
 
     await project.save();
+
+    try {
+      await logActivity({
+        actorId: userId,
+        projectId: project._id.toString(),
+        type: "project.member_added",
+        message: `You were added to project "${project.name}"`,
+        recipientId: targetId,
+        notificationType: "project.member_added",
+      });
+    } catch (activityError) {
+      // Membership is already saved; don't report the whole operation as failed.
+      console.error("[Activity] Failed to log member addition:", activityError);
+    }
 
     return res.status(201).json({
       member: {
@@ -256,6 +271,19 @@ router.delete("/:memberId", authenticate, async (req, res, next) => {
 
     await project.save();
 
+    try {
+      await logActivity({
+        actorId: userId,
+        projectId: project._id.toString(),
+        type: "project.member_removed",
+        message: `You were removed from project "${project.name}"`,
+        recipientId: memberId,
+        notificationType: "project.member_removed",
+      });
+    } catch (activityError) {
+      console.error("[Activity] Failed to log member removal:", activityError);
+    }
+
     // Remove the deleted member's task assignments in this project.
     if (!TaskModel || typeof TaskModel.updateMany !== "function") {
       throw new Error(
@@ -263,15 +291,20 @@ router.delete("/:memberId", authenticate, async (req, res, next) => {
       );
     }
 
-    await TaskModel.updateMany(
-      {
-        project: project._id,
-        assignee: new mongoose.Types.ObjectId(memberId),
-      },
-      {
-        $unset: { assignee: 1 },
-      },
-    );
+    try {
+      await TaskModel.updateMany(
+        {
+          project: project._id,
+          assignee: new mongoose.Types.ObjectId(memberId),
+        },
+        {
+          $unset: { assignee: 1 },
+        },
+      );
+    } catch (assignmentError) {
+      // The member removal already succeeded; log assignment cleanup failure.
+      console.error("[Members] Failed to clear removed member task assignments:", assignmentError);
+    }
 
     return res.json({
       message: "Member removed successfully",

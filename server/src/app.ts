@@ -54,6 +54,11 @@ app.use(
   authRoutes,
 );
 
+// Mount the more-specific nested member routes BEFORE /api/v1/projects.
+// Otherwise projectRoutes' /:id/members handlers intercept requests first
+ // and require userId, while the member-management UI sends an email.
+app.use("/api/v1/projects/:projectId/members", projectMembersRoutes);
+
 app.use(
   "/api/v1/projects",
   rateLimit({
@@ -64,8 +69,6 @@ app.use(
   }),
   projectRoutes,
 );
-
-app.use("/api/v1/projects/:projectId/members", projectMembersRoutes);
 
 app.use(
   "/api/v1",

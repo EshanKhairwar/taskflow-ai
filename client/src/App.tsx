@@ -19,6 +19,7 @@ import {
   FolderKanban,
   LayoutDashboard,
   ListTodo,
+  MessageSquare,
   LogOut,
   Menu,
   Plus,
@@ -1949,7 +1950,9 @@ export default function App() {
                           className="flex gap-3 py-3 first:pt-0 last:pb-0"
                         >
                           <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-violet-50 text-violet-600">
-                            {item.type.startsWith("task.") ? (
+                            {item.type === "comment.added" ? (
+                              <MessageSquare size={17} />
+                            ) : item.type.startsWith("task.") ? (
                               <ListTodo size={17} />
                             ) : (
                               <FolderKanban size={17} />

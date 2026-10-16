@@ -682,6 +682,10 @@ router.patch("/tasks/:id", authenticate, async (req, res, next) => {
     const previousAssignee = task.assignee?.toString();
 
     const previousStatus = task.status;
+    const previousTitle = task.title;
+    const previousDescription = task.description;
+    const previousPriority = task.priority;
+    const previousDueDate = task.dueDate?.getTime();
 
     if (data.assignee) {
 
@@ -785,6 +789,25 @@ router.patch("/tasks/:id", authenticate, async (req, res, next) => {
 
         });
 
+      }
+
+      const hasNonStatusChanges =
+        (data.title !== undefined && data.title !== previousTitle) ||
+        (data.description !== undefined && data.description !== previousDescription) ||
+        (data.priority !== undefined && data.priority !== previousPriority) ||
+        (data.dueDate !== undefined &&
+          (data.dueDate === null
+            ? previousDueDate !== undefined
+            : data.dueDate.getTime() !== previousDueDate));
+
+      if (hasNonStatusChanges) {
+        await logActivity({
+          actorId: userId,
+          projectId: task.project.toString(),
+          taskId: task._id.toString(),
+          type: "task.updated",
+          message: `Updated task "${task.title}"`,
+        });
       }
 
     } catch (error) {
@@ -986,6 +1009,18 @@ router.delete("/tasks/:id", authenticate, async (req, res, next) => {
     }
 
     await task.deleteOne();
+
+    // Keep a readable event even though the referenced task no longer exists.
+    try {
+      await logActivity({
+        actorId: userId,
+        projectId: task.project.toString(),
+        type: "task.deleted",
+        message: `Deleted task "${task.title}"`,
+      });
+    } catch (activityError) {
+      console.error("[Activity] Failed to log task deletion:", activityError);
+    }
 
     res.json({
 

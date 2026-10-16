@@ -10,6 +10,7 @@ type EventType =
   | "task.status_changed"
   | "task.assigned"
   | "task.deleted"
+  | "comment.added"
   | "project.member_added"
   | "project.member_removed";
 

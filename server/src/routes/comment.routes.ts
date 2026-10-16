@@ -5,6 +5,7 @@ import Comment from "../models/Comment.js";
 import Task from "../models/Task.js";
 import Project from "../models/Project.js";
 import { authenticate, type AuthRequest } from "../middleware/authenticate.js";
+import { logActivity } from "../services/activity.service.js";
 
 const router = Router();
 
@@ -109,6 +110,20 @@ router.post("/tasks/:taskId", authenticate, async (req, res, next) => {
     const populatedComment = await Comment.findById(comment._id)
       .populate("author", "name email avatarUrl")
       .lean();
+
+    // Activity history is best-effort: a logging failure must not make a
+    // successfully saved comment appear to fail to the user.
+    try {
+      await logActivity({
+        actorId: userId,
+        projectId: result.task.project.toString(),
+        taskId: result.task._id.toString(),
+        type: "comment.added",
+        message: `Commented on task "${result.task.title}"`,
+      });
+    } catch (activityError) {
+      console.error("[Activity] Failed to log comment:", activityError);
+    }
 
     res.status(201).json({ comment: populatedComment });
   } catch (error) {

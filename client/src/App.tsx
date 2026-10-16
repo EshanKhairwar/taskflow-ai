@@ -199,6 +199,13 @@ export default function App() {
 
   const [projects, setProjects] = useState<Project[]>([]);
 
+  const [taskStats, setTaskStats] = useState({
+    open: 0,
+    completed: 0,
+    dueSoon: 0,
+  });
+  const [taskStatsLoading, setTaskStatsLoading] = useState(true);
+
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const [loading, setLoading] = useState(true);
@@ -386,6 +393,86 @@ export default function App() {
 
     void loadProjects();
   }, [isAuthenticated, loadProjects]);
+
+  // Load task statistics across all projects the signed-in user can access.
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadTaskStats() {
+      if (!isAuthenticated) {
+        setTaskStats({ open: 0, completed: 0, dueSoon: 0 });
+        setTaskStatsLoading(false);
+        return;
+      }
+
+      if (loading) return;
+      if (projects.length === 0) {
+        setTaskStats({ open: 0, completed: 0, dueSoon: 0 });
+        setTaskStatsLoading(false);
+        return;
+      }
+
+      setTaskStatsLoading(true);
+      try {
+        const taskLists = await Promise.all(
+          projects.map(async (project) => {
+            const projectId = project._id ?? project.id;
+            if (!projectId)
+              return [] as Array<{ status?: string; dueDate?: string | null }>;
+
+            const collected: Array<{
+              status?: string;
+              dueDate?: string | null;
+            }> = [];
+            let page = 1;
+            let totalPages = 1;
+
+            do {
+              const response = await apiRequest<{
+                tasks?: Array<{ status?: string; dueDate?: string | null }>;
+                pagination?: { totalPages?: number };
+              }>(
+                `/projects/${encodeURIComponent(projectId)}/tasks?page=${page}&limit=100`,
+              );
+              if (Array.isArray(response.tasks))
+                collected.push(...response.tasks);
+              totalPages = Math.max(
+                1,
+                Number(response.pagination?.totalPages) || 1,
+              );
+              page += 1;
+            } while (page <= totalPages);
+
+            return collected;
+          }),
+        );
+
+        if (cancelled) return;
+        const tasks = taskLists.flat();
+        const now = Date.now();
+        const nextSevenDays = now + 7 * 24 * 60 * 60 * 1000;
+        const completed = tasks.filter((task) => task.status === "done").length;
+        const openTasks = tasks.filter((task) => task.status !== "done");
+        const dueSoon = openTasks.filter((task) => {
+          if (!task.dueDate) return false;
+          const due = new Date(task.dueDate).getTime();
+          return Number.isFinite(due) && due >= now && due <= nextSevenDays;
+        }).length;
+
+        setTaskStats({ open: openTasks.length, completed, dueSoon });
+      } catch (error) {
+        console.error("Failed to load dashboard task statistics:", error);
+        if (!cancelled) setTaskStats({ open: 0, completed: 0, dueSoon: 0 });
+      } finally {
+        if (!cancelled) setTaskStatsLoading(false);
+      }
+    }
+
+    void loadTaskStats();
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, loading, projects]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -1519,9 +1606,9 @@ export default function App() {
                 {
                   title: "Open tasks",
 
-                  value: "—",
+                  value: taskStatsLoading ? "—" : String(taskStats.open),
 
-                  sub: "Task API integration pending",
+                  sub: "Tasks not yet completed",
 
                   icon: ListTodo,
 
@@ -1531,9 +1618,9 @@ export default function App() {
                 {
                   title: "Tasks completed",
 
-                  value: "—",
+                  value: taskStatsLoading ? "—" : String(taskStats.completed),
 
-                  sub: "Task API integration pending",
+                  sub: "Tasks marked as done",
 
                   icon: CheckCircle2,
 
@@ -1543,9 +1630,9 @@ export default function App() {
                 {
                   title: "Due soon",
 
-                  value: "—",
+                  value: taskStatsLoading ? "—" : String(taskStats.dueSoon),
 
-                  sub: "Upcoming task deadlines",
+                  sub: "Due in the next 7 days",
 
                   icon: Clock3,
 

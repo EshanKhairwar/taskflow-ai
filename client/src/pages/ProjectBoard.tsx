@@ -11,6 +11,7 @@ import TaskColumn from "../components/tasks/TaskColumn";
 import ProjectTeamPanel from "../components/projects/ProjectTeamPanel";
 
 import AiTaskPlanner from "../components/tasks/AiTaskPlanner";
+import AiProjectCopilot from "../components/tasks/AiProjectCopilot";
 
 import {
   getProjectMembers,
@@ -395,6 +396,23 @@ export default function ProjectBoard({
         <div className="mb-5">
           <ProjectTeamPanel projectId={projectId} />
         </div>
+
+        <AiProjectCopilot
+          projectId={projectId}
+          onCreateTasks={async (draftTasks) => {
+            const createdTitles: string[] = [];
+            for (const draft of draftTasks) {
+              const created = await create({
+                title: draft.title,
+                description: draft.description || undefined,
+                priority: draft.priority,
+                status: "todo",
+              });
+              createdTitles.push(created.title);
+            }
+            await refresh();
+          }}
+        />
 
         {error && (
           <div

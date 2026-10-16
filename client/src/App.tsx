@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { FormEvent } from "react";
 
@@ -34,6 +34,7 @@ import {
 
 import { apiRequest } from "./api/client";
 import { logoutUser } from "./api/auth.api";
+import { socket } from "./socket";
 
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Signup";
@@ -192,6 +193,7 @@ export default function App() {
   const [activityError, setActivityError] = useState("");
 
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const seenNotificationIds = useRef<Set<string>>(new Set());
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
@@ -289,9 +291,15 @@ export default function App() {
         "/notifications?limit=20",
         { method: "GET" },
       );
-      setNotifications(
-        Array.isArray(response.notifications) ? response.notifications : [],
-      );
+      const nextNotifications = Array.isArray(response.notifications)
+        ? response.notifications
+        : [];
+      nextNotifications.forEach((notification) => {
+        if (notification._id) {
+          seenNotificationIds.current.add(notification._id);
+        }
+      });
+      setNotifications(nextNotifications);
     } catch (error) {
       setNotificationError(
         error instanceof Error
@@ -302,6 +310,44 @@ export default function App() {
       setNotificationsLoading(false);
     }
   }, []);
+
+  // Keep the existing notification dropdown in sync with persisted Socket.IO events.
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    function handleNewNotification(notification: NotificationItem) {
+      const id = notification?._id;
+      if (!id || seenNotificationIds.current.has(id)) return;
+
+      seenNotificationIds.current.add(id);
+      setNotifications((current) => [notification, ...current].slice(0, 20));
+
+      if (!notification.readAt) {
+        setUnreadCount((count) => count + 1);
+      }
+    }
+
+    function handleConnect() {
+      void loadUnreadCount();
+    }
+
+    function handleConnectError(error: Error) {
+      console.warn("[Socket] Notification connection failed:", error.message);
+    }
+
+    socket.on("notification:new", handleNewNotification);
+    socket.on("connect", handleConnect);
+    socket.on("connect_error", handleConnectError);
+
+    if (!socket.connected) socket.connect();
+
+    return () => {
+      socket.off("notification:new", handleNewNotification);
+      socket.off("connect", handleConnect);
+      socket.off("connect_error", handleConnectError);
+      socket.disconnect();
+    };
+  }, [isAuthenticated, loadUnreadCount, loadNotifications]);
 
   async function handleNotificationsClick() {
     const willOpen = !notificationsOpen;

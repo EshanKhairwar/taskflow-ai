@@ -114,15 +114,39 @@ router.post("/tasks/:taskId", authenticate, async (req, res, next) => {
     // Activity history is best-effort: a logging failure must not make a
     // successfully saved comment appear to fail to the user.
     try {
+      const project = await Project.findById(result.task.project)
+        .select("owner members.user")
+        .lean();
+
+      const recipients = new Set<string>();
+      if (project?.owner) recipients.add(project.owner.toString());
+      for (const member of project?.members ?? []) {
+        if (member.user) recipients.add(member.user.toString());
+      }
+      recipients.delete(userId);
+
+      const populatedAuthor = populatedComment?.author;
+      const authorName =
+        populatedAuthor &&
+        typeof populatedAuthor === "object" &&
+        "name" in populatedAuthor &&
+        typeof populatedAuthor.name === "string"
+          ? populatedAuthor.name
+          : "A teammate";
+
       await logActivity({
         actorId: userId,
         projectId: result.task.project.toString(),
         taskId: result.task._id.toString(),
         type: "comment.added",
-        message: `Commented on task "${result.task.title}"`,
+        message: `${authorName} commented on task "${result.task.title}"`,
+        recipientIds: Array.from(recipients),
+        notificationType: "comment.added",
       });
     } catch (activityError) {
-      console.error("[Activity] Failed to log comment:", activityError);
+      // Comment creation has already succeeded; activity/notification failures
+      // must not make the saved comment appear to fail.
+      console.error("[Activity] Failed to log comment/notifications:", activityError);
     }
 
     res.status(201).json({ comment: populatedComment });

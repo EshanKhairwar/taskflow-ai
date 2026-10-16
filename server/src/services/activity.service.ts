@@ -16,6 +16,7 @@ type EventType =
 
 type NotificationType =
   | "task.assigned"
+  | "comment.added"
   | "project.member_added"
   | "project.member_removed";
 
@@ -26,6 +27,7 @@ interface LogEventInput {
   type: EventType;
   message: string;
   recipientId?: string;
+  recipientIds?: string[];
   notificationType?: NotificationType;
 }
 
@@ -40,43 +42,46 @@ export async function logActivity(input: LogEventInput) {
     message: input.message,
   });
 
-  if (
-    input.recipientId &&
-    input.recipientId !== input.actorId &&
-    input.notificationType
-  ) {
-    const notification = await Notification.create({
-      recipient: new mongoose.Types.ObjectId(input.recipientId),
-      actor: new mongoose.Types.ObjectId(input.actorId),
-      project: new mongoose.Types.ObjectId(input.projectId),
-      task: input.taskId
-        ? new mongoose.Types.ObjectId(input.taskId)
-        : undefined,
-      type: input.notificationType,
-      message: input.message,
-    });
+  const recipients = Array.from(
+    new Set(
+      [input.recipientId, ...(input.recipientIds ?? [])]
+        .filter((recipient): recipient is string => Boolean(recipient))
+        .filter((recipient) => recipient !== input.actorId),
+    ),
+  );
 
-    try {
-      const populatedNotification = await Notification.findById(
-        notification._id,
-      )
-        .populate("actor", "name email avatar")
-        .populate("project", "name")
-        .populate("task", "title")
-        .lean();
+  if (recipients.length > 0 && input.notificationType) {
+    for (const recipientId of recipients) {
+      try {
+        const notification = await Notification.create({
+          recipient: new mongoose.Types.ObjectId(recipientId),
+          actor: new mongoose.Types.ObjectId(input.actorId),
+          project: new mongoose.Types.ObjectId(input.projectId),
+          task: input.taskId
+            ? new mongoose.Types.ObjectId(input.taskId)
+            : undefined,
+          type: input.notificationType,
+          message: input.message,
+        });
 
-      if (populatedNotification) {
-        emitNotificationToUser(
-          input.recipientId,
-          populatedNotification,
+        const populatedNotification = await Notification.findById(
+          notification._id,
+        )
+          .populate("actor", "name email avatar")
+          .populate("project", "name")
+          .populate("task", "title")
+          .lean();
+
+        if (populatedNotification) {
+          emitNotificationToUser(recipientId, populatedNotification);
+        }
+      } catch (error) {
+        // Notification failure must not break the underlying task/comment action.
+        console.error(
+          `[Notifications] Failed to notify user ${recipientId}:`,
+          error,
         );
       }
-    } catch (error) {
-      // Real-time delivery failure must not break task operations.
-      console.error(
-        "[Socket] Failed to prepare notification event:",
-        error,
-      );
     }
   }
 

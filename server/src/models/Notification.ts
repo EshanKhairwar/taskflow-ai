@@ -28,6 +28,7 @@ const notificationSchema = new Schema(
       type: String,
       enum: [
         "task.assigned",
+        "comment.added",
         "project.member_added",
         "project.member_removed",
       ],

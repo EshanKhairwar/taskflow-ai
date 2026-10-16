@@ -12,6 +12,7 @@ import ProjectTeamPanel from "../components/projects/ProjectTeamPanel";
 
 import AiTaskPlanner from "../components/tasks/AiTaskPlanner";
 import AiProjectCopilot from "../components/tasks/AiProjectCopilot";
+import TaskComments from "../components/tasks/TaskComments";
 
 import {
   getProjectMembers,
@@ -486,7 +487,7 @@ export default function ProjectBoard({
             role="dialog"
             aria-modal="true"
             aria-labelledby="task-modal-title"
-            className="my-auto w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900 sm:p-7"
+            className="my-auto max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900 sm:p-7"
           >
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
@@ -759,6 +760,8 @@ export default function ProjectBoard({
                 </button>
               </div>
             </form>
+
+            {editingTask && <TaskComments taskId={editingTask._id} />}
           </section>
         </div>
       )}

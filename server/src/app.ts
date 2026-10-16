@@ -11,6 +11,7 @@ import projectMembersRoutes from "./routes/project-members.routes.js";
 import activityRoutes from "./routes/activity.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
+import commentRoutes from "./routes/comment.routes.js";
 
 
 const app = express();
@@ -81,6 +82,7 @@ app.use(
   taskRoutes,
 );
 app.use("/api/v1/activity", activityRoutes);
+app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 
 app.use("/api/v1/ai", aiRoutes);

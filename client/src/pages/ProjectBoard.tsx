@@ -20,6 +20,7 @@ import {
 } from "../api/projectMembers.api";
 
 import { useTasks } from "../hooks/useTasks";
+import { useProjectSocket } from "../hooks/useProjectSocket";
 
 import type { CreateTaskInput, Task, TaskPriority, TaskStatus } from "../types";
 
@@ -118,6 +119,8 @@ export default function ProjectBoard({
 
     saving,
   } = useTasks(projectId);
+
+  const { status: socketStatus } = useProjectSocket(projectId, refresh);
 
   const [search, setSearch] = useState("");
 
@@ -354,6 +357,14 @@ export default function ProjectBoard({
               />
             </label>
 
+            <span
+              className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold ${socketStatus === "connected" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" : socketStatus === "error" ? "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300" : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"}`}
+              title={`Live collaboration: ${socketStatus}`}
+            >
+              <span className={`h-2 w-2 rounded-full ${socketStatus === "connected" ? "bg-emerald-500" : socketStatus === "error" ? "bg-rose-500" : "bg-slate-400"}`} />
+              {socketStatus === "connected" ? "Live connected" : socketStatus === "error" ? "Live unavailable" : "Connecting live"}
+            </span>
+
             <button
               type="button"
               onClick={() => void refresh()}
@@ -421,6 +432,14 @@ export default function ProjectBoard({
             className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-300"
           >
             <span>{error}</span>
+
+            <span
+              className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold ${socketStatus === "connected" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" : socketStatus === "error" ? "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300" : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"}`}
+              title={`Live collaboration: ${socketStatus}`}
+            >
+              <span className={`h-2 w-2 rounded-full ${socketStatus === "connected" ? "bg-emerald-500" : socketStatus === "error" ? "bg-rose-500" : "bg-slate-400"}`} />
+              {socketStatus === "connected" ? "Live connected" : socketStatus === "error" ? "Live unavailable" : "Connecting live"}
+            </span>
 
             <button
               type="button"

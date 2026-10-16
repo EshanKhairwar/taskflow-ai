@@ -273,3 +273,127 @@ export async function generateTaskSuggestion(
     `All configured AI providers failed. ${failures.join(" | ")}`,
   );
 }
+
+
+const ProjectPlanSchema = z
+  .object({
+    tasks: z.array(TaskSuggestionSchema).min(3).max(8),
+  })
+  .strict();
+
+export type ProjectPlanSuggestion = z.infer<typeof ProjectPlanSchema>;
+
+const PROJECT_PLAN_SYSTEM_PROMPT = `
+You are TaskFlow AI, a project planning assistant.
+Return only a valid JSON object with exactly one property named "tasks".
+"tasks" must contain 3 to 8 actionable task objects. Every task must have exactly:
+- title: concise actionable title (2-150 characters)
+- description: clear expected outcome
+- priority: low, medium, or high
+- subtasks: 3 to 6 short actionable strings
+Create a sensible order from setup/foundations through implementation, testing, and delivery where appropriate.
+Avoid duplicate tasks. Do not include markdown or extra properties. These are drafts only; do not claim they have been saved.
+`.trim();
+
+async function requestProjectPlanFromProvider(
+  provider: ProviderConfig,
+  prompt: string,
+): Promise<ProjectPlanSuggestion> {
+  if (!provider.apiKey) {
+    throw new ProviderRequestError(
+      `${provider.name} API key is not configured.`,
+      false,
+    );
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    let response: Response;
+    try {
+      response = await fetch(provider.baseUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${provider.apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: provider.model,
+          messages: [
+            { role: "system", content: PROJECT_PLAN_SYSTEM_PROMPT },
+            { role: "user", content: prompt },
+          ],
+          temperature: 0.2,
+          max_tokens: 3000,
+          response_format: { type: "json_object" },
+        }),
+        signal: controller.signal,
+      });
+    } catch (error) {
+      const timedOut = error instanceof Error && error.name === "AbortError";
+      throw new ProviderRequestError(
+        timedOut ? `${provider.name} request timed out.` : `${provider.name} network request failed.`,
+        true,
+      );
+    }
+
+    if (!response.ok) {
+      const body = (await response.json().catch(() => null)) as { error?: { message?: string } } | null;
+      throw new ProviderRequestError(
+        body?.error?.message || `${provider.name} returned HTTP ${response.status}.`,
+        isRetryableStatus(response.status),
+        response.status,
+      );
+    }
+
+    const data = (await response.json()) as ChatCompletionResponse;
+    const content = data.choices?.[0]?.message?.content;
+    if (!content) {
+      throw new ProviderRequestError(`${provider.name} returned an empty response.`, true);
+    }
+
+    const validated = ProjectPlanSchema.safeParse(parseJsonContent(content));
+    if (!validated.success) {
+      throw new ProviderRequestError(
+        `${provider.name} returned a response with an invalid project plan structure.`,
+        true,
+      );
+    }
+    return validated.data;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+/** Generate a multi-task project plan without saving it to the database. */
+export async function generateProjectPlan(
+  prompt: string,
+): Promise<ProjectPlanSuggestion> {
+  const cleanPrompt = prompt.trim();
+  if (cleanPrompt.length < 10 || cleanPrompt.length > 2000) {
+    throw new Error("Project plan prompt must contain 10–2000 characters.");
+  }
+
+  const configuredProviders = providers.filter((provider) => Boolean(provider.apiKey));
+  if (configuredProviders.length === 0) {
+    throw new Error("AI_NOT_CONFIGURED");
+  }
+
+  const failures: string[] = [];
+  for (const provider of configuredProviders) {
+    try {
+      const plan = await requestProjectPlanFromProvider(provider, cleanPrompt);
+      console.info(`[AI Planner] Project plan generated using ${provider.name}.`);
+      return plan;
+    } catch (error) {
+      const failure = error instanceof Error ? error.message : "Unknown provider error";
+      console.warn(`[AI Planner] ${provider.name} project plan failed: ${failure}`);
+      failures.push(`${provider.name}: ${failure}`);
+      if (!(error instanceof ProviderRequestError) || !error.retryable) {
+        throw new Error(failure);
+      }
+    }
+  }
+  throw new Error(`All configured AI providers failed. ${failures.join(" | ")}`);
+}

@@ -8,7 +8,7 @@ import {
   authenticate,
   type AuthRequest,
 } from "../middleware/authenticate.js";
-import { generateTaskSuggestion } from "../services/aiPlanner.service.js";
+import { generateProjectPlan, generateTaskSuggestion } from "../services/aiPlanner.service.js";
 
 const router = Router();
 
@@ -232,6 +232,83 @@ router.post(
       next(error);
     }
   }
+);
+
+
+// Generate a reviewable multi-task project plan. This endpoint never saves tasks.
+router.post(
+  "/generate-project-plan",
+  authenticate,
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 8,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: "Too many AI planning requests. Please try again later." },
+  }),
+  async (req, res, next) => {
+    try {
+      const userId = getUserId(req);
+      if (!userId) {
+        res.status(401).json({ message: "Authentication required" });
+        return;
+      }
+
+      const parsed = requestSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          message: "Invalid project ID or prompt. Prompt must contain 10–2000 characters.",
+          errors: parsed.error.flatten(),
+        });
+        return;
+      }
+
+      const { projectId, prompt } = parsed.data;
+      const project = await Project.findOne({
+        _id: projectId,
+        $or: [{ owner: userId }, { "members.user": userId }],
+      })
+        .select("_id")
+        .maxTimeMS(5000);
+
+      if (!project) {
+        res.status(404).json({ message: "Project not found or access denied" });
+        return;
+      }
+
+      const plan = await generateProjectPlan(prompt);
+      res.status(200).json({
+        message: "Project plan generated successfully. Review it before creating tasks.",
+        plan,
+      });
+    } catch (error: unknown) {
+      const status = getErrorStatus(error);
+      console.error("[AI Project Plan] Request failed", {
+        message: error instanceof Error ? error.message : "Unknown error",
+        status,
+        name: error instanceof Error ? error.name : "UnknownError",
+      });
+
+      if (res.headersSent) return next(error);
+      if (error instanceof Error && error.message === "AI_NOT_CONFIGURED") {
+        res.status(503).json({ message: "AI service is not configured. Configure GROQ_API_KEY or MISTRAL_API_KEY." });
+        return;
+      }
+      if (isTimeoutError(error)) {
+        res.status(504).json({ message: "The AI request timed out. Please try again." });
+        return;
+      }
+      if (status === 429 || status === 503 || isConnectionError(error)) {
+        res.status(503).json({ message: "AI providers are temporarily unavailable. Please try again shortly." });
+        return;
+      }
+      if (error instanceof Error && /invalid.*(json|structure|response)/i.test(error.message)) {
+        res.status(502).json({ message: "AI returned an invalid project plan. Please try again." });
+        return;
+      }
+      next(error);
+    }
+  },
 );
 
 export default router;

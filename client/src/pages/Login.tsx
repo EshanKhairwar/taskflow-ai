@@ -1,6 +1,7 @@
-
 import { useState } from "react";
+
 import type { FormEvent } from "react";
+
 import {
   Eye,
   EyeOff,
@@ -12,11 +13,14 @@ import {
   ArrowLeft,
   RefreshCw,
 } from "lucide-react";
+
 import { loginUser } from "../api/auth.api";
+
 import { apiRequest } from "../api/client";
 
 interface LoginPageProps {
   onLogin: () => void;
+
   onSwitchToSignup: () => void;
 }
 
@@ -26,28 +30,42 @@ type VerificationResponse = {
 
 export default function LoginPage({
   onLogin,
+
   onSwitchToSignup,
 }: LoginPageProps) {
   const [email, setEmail] = useState("");
+
   const [password, setPassword] = useState("");
+
   const [otp, setOtp] = useState("");
+
   const [error, setError] = useState("");
+
   const [notice, setNotice] = useState("");
+
   const [loading, setLoading] = useState(false);
+
   const [showPassword, setShowPassword] = useState(false);
+
   const [verificationMode, setVerificationMode] = useState(false);
+
   const [otpSent, setOtpSent] = useState(false);
-  const [otpLoading, setOtpLoading] = useState(false);
+
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpVerifying, setOtpVerifying] = useState(false);
 
   const normalizedEmail = email.trim().toLowerCase();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
     setError("");
+
     setNotice("");
 
     if (!normalizedEmail || !password) {
       setError("Please enter your email and password.");
+
       return;
     }
 
@@ -56,19 +74,20 @@ export default function LoginPage({
     try {
       await loginUser({
         email: normalizedEmail,
+
         password,
       });
 
       onLogin();
     } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Unable to sign in.";
+      const message = err instanceof Error ? err.message : "Unable to sign in.";
 
       setError(message);
 
       // Offer verification when login fails because the email is unverified.
+
       if (
-        /verify your email|email.*not verified|not verified/i.test(message)
+        /verify your email|email.\*not verified|not verified/i.test(message)
       ) {
         setVerificationMode(true);
       }
@@ -79,25 +98,33 @@ export default function LoginPage({
 
   async function handleResendOtp() {
     setError("");
+
     setNotice("");
 
-    if (!normalizedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    if (
+      !normalizedEmail ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)
+    ) {
       setError("Enter a valid email address first.");
+
       return;
     }
 
-    setOtpLoading(true);
+    setOtpSending(true);
 
     try {
       const response = await apiRequest<VerificationResponse>(
         "/auth/resend-verification",
+
         {
           method: "POST",
+
           body: JSON.stringify({ email: normalizedEmail }),
         },
       );
 
       setOtpSent(true);
+
       setNotice(
         response.message ??
           "If your account needs verification, a new code has been requested.",
@@ -109,46 +136,56 @@ export default function LoginPage({
           : "Unable to request a verification code.",
       );
     } finally {
-      setOtpLoading(false);
+      setOtpSending(false);
     }
   }
 
   async function handleVerifyOtp(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
     setError("");
+
     setNotice("");
 
     if (!normalizedEmail) {
       setError("Enter your registered email address.");
+
       return;
     }
 
     if (!/^\d{6}$/.test(otp)) {
       setError("Enter the complete six-digit verification code.");
+
       return;
     }
 
-    setOtpLoading(true);
+    setOtpVerifying(true);
 
     try {
       const response = await apiRequest<VerificationResponse>(
         "/auth/verify-email",
+
         {
           method: "POST",
+
           body: JSON.stringify({
             email: normalizedEmail,
+
             otp,
           }),
         },
       );
 
       setVerificationMode(false);
+
       setOtpSent(false);
+
       setOtp("");
+
       setPassword("");
+
       setNotice(
-        response.message ??
-          "Email verified successfully. You can now log in.",
+        response.message ?? "Email verified successfully. You can now log in.",
       );
     } catch (err: unknown) {
       setError(
@@ -157,21 +194,26 @@ export default function LoginPage({
           : "Verification failed. Check your code and try again.",
       );
     } finally {
-      setOtpLoading(false);
+      setOtpVerifying(false);
     }
   }
 
   function openVerification() {
     setError("");
+
     setNotice("");
+
     setOtp("");
+
     setOtpSent(false);
+
     setVerificationMode(true);
   }
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4 py-10 text-white">
       <div className="pointer-events-none absolute -left-32 -top-32 size-96 rounded-full bg-violet-600/20 blur-3xl" />
+
       <div className="pointer-events-none absolute -bottom-32 -right-32 size-96 rounded-full bg-indigo-600/20 blur-3xl" />
 
       <section className="relative w-full max-w-md">
@@ -196,7 +238,9 @@ export default function LoginPage({
                 type="button"
                 onClick={() => {
                   setVerificationMode(false);
+
                   setError("");
+
                   setNotice("");
                 }}
                 className="mb-5 inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-white"
@@ -211,6 +255,7 @@ export default function LoginPage({
                 </div>
 
                 <h2 className="text-xl font-bold">Verify your email</h2>
+
                 <p className="mt-2 text-sm leading-6 text-slate-400">
                   Request a verification code for your registered email, then
                   enter the six-digit OTP below.
@@ -234,7 +279,7 @@ export default function LoginPage({
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="you@example.com"
-                  disabled={otpLoading}
+                  disabled={otpSending || otpVerifying}
                   className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 disabled:opacity-60"
                 />
               </div>
@@ -242,15 +287,18 @@ export default function LoginPage({
               <button
                 type="button"
                 onClick={handleResendOtp}
-                disabled={otpLoading}
+                disabled={otpSending || otpVerifying}
                 className="mb-5 flex w-full items-center justify-center gap-2 rounded-xl border border-violet-500/40 px-4 py-3 text-sm font-semibold text-violet-300 transition hover:bg-violet-500/10 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {otpLoading ? (
+                {otpSending ? (
                   <LoaderCircle size={17} className="animate-spin" />
                 ) : (
                   <RefreshCw size={17} />
                 )}
-                {otpSent ? "Resend verification code" : "Send verification code"}
+
+                {otpSent
+                  ? "Resend verification code"
+                  : "Send verification code"}
               </button>
 
               <form onSubmit={handleVerifyOtp} className="space-y-5">
@@ -276,7 +324,7 @@ export default function LoginPage({
                     }
                     placeholder="000000"
                     required
-                    disabled={otpLoading}
+                    disabled={otpSending || otpVerifying}
                     className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-4 text-center text-2xl font-bold tracking-[0.5em] text-white outline-none transition placeholder:text-slate-700 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 disabled:opacity-60"
                   />
                 </div>
@@ -303,10 +351,10 @@ export default function LoginPage({
 
                 <button
                   type="submit"
-                  disabled={otpLoading}
+                  disabled={otpSending || otpVerifying}
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg transition hover:from-violet-500 hover:to-indigo-500 focus:outline-none focus:ring-4 focus:ring-violet-500/20 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {otpLoading ? (
+                  {otpVerifying ? (
                     <LoaderCircle size={18} className="animate-spin" />
                   ) : (
                     <MailCheck size={18} />
@@ -319,6 +367,7 @@ export default function LoginPage({
             <>
               <div className="mb-7">
                 <h2 className="text-xl font-bold">Welcome back</h2>
+
                 <p className="mt-2 text-sm text-slate-400">
                   Sign in to continue to your workspace.
                 </p>
@@ -372,7 +421,9 @@ export default function LoginPage({
 
                     <button
                       type="button"
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
                       aria-pressed={showPassword}
                       onClick={() => setShowPassword((current) => !current)}
                       disabled={loading}

@@ -85,6 +85,27 @@ router.get("/", authenticate, async (req, res, next) => {
       roleById.set(member.user.toString(), member.role);
     }
 
+    // Include per-member task counts so the Team page can show workload.
+    const assignedTasks = TaskModel && typeof TaskModel.find === "function"
+      ? await TaskModel.find({
+          project: project._id,
+          assignee: { $in: [...memberIds] },
+        })
+          .select("assignee")
+          .lean()
+      : [];
+
+    const taskCountByUser = new Map<string, number>();
+    for (const task of assignedTasks as any[]) {
+      const assigneeId = task.assignee?.toString();
+      if (assigneeId) {
+        taskCountByUser.set(
+          assigneeId,
+          (taskCountByUser.get(assigneeId) ?? 0) + 1,
+        );
+      }
+    }
+
     return res.json({
       members: users.map((user: any) => ({
         id: user._id.toString(),
@@ -93,6 +114,7 @@ router.get("/", authenticate, async (req, res, next) => {
         avatar: user.avatarUrl ?? "",
         role: roleById.get(user._id.toString()) ?? "member",
         isOwner: user._id.toString() === project.owner.toString(),
+        assignedTaskCount: taskCountByUser.get(user._id.toString()) ?? 0,
       })),
       canManageMembers: isAdmin(project, userId),
     });
@@ -202,6 +224,7 @@ router.post("/", authenticate, async (req, res, next) => {
         avatar: user.avatarUrl ?? "",
         role: "member",
         isOwner: false,
+        assignedTaskCount: 0,
       },
       message: "Member added successfully",
     });

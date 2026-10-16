@@ -7,6 +7,7 @@ export interface ProjectMember {
   avatar: string;
   role: "admin" | "member";
   isOwner: boolean;
+  assignedTaskCount?: number;
 }
 
 export interface ProjectMembersResponse {

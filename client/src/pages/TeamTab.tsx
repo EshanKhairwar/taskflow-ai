@@ -19,8 +19,6 @@ function getProjectId(project: TeamProject) {
 }
 
 export default function TeamTab({ projects, loading = false, onOpenProjects }: TeamTabProps) {
-   console.log("TEAM TAB RUNNING");
-  console.log("PROJECTS:", projects);
   const validProjects = useMemo(() => projects.filter((project) => getProjectId(project)), [projects]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
 

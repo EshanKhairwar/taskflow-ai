@@ -11,8 +11,6 @@ interface ProjectTeamPanelProps {
 }
 
 export default function ProjectTeamPanel({ projectId }: ProjectTeamPanelProps) {
-  console.log("✅ ProjectTeamPanel rendered");
-  console.log("🆔 Project ID:", projectId);
   const [members, setMembers] = useState<ProjectMember[]>([]);
   const [canManageMembers, setCanManageMembers] = useState(false);
   const [email, setEmail] = useState("");
@@ -22,20 +20,15 @@ export default function ProjectTeamPanel({ projectId }: ProjectTeamPanelProps) {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
- const refresh = useCallback(async () => {
-  console.log("🚀 Fetching project members for:", projectId);
-
-  setLoading(true);
+  const refresh = useCallback(async () => {
+    setLoading(true);
   setError("");
 
   try {
     const result = await getProjectMembers(projectId);
-    console.log("✅ Members API response:", result);
-
     setMembers(result.members);
     setCanManageMembers(result.canManageMembers);
   } catch (err) {
-    console.error("❌ Members API error:", err);
     setError(
       err instanceof Error ? err.message : "Could not load project members."
     );
@@ -185,6 +178,9 @@ export default function ProjectTeamPanel({ projectId }: ProjectTeamPanelProps) {
                 </p>
                 <p className="truncate text-xs text-slate-500 dark:text-slate-400">
                   {member.email}
+                </p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  {member.assignedTaskCount ?? 0} {(member.assignedTaskCount ?? 0) === 1 ? "task" : "tasks"} assigned
                 </p>
               </div>
               <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium capitalize text-slate-600 dark:bg-slate-800 dark:text-slate-300">

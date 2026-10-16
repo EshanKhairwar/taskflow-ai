@@ -320,25 +320,25 @@ export default function ProjectBoard({
     : 0;
 
   return (
-    <main className="min-h-screen bg-white px-4 py-6 text-slate-900 dark:bg-slate-950 dark:text-slate-100 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-[1600px]">
-        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <main className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900 dark:bg-[#080b18] dark:text-slate-100 sm:px-6 sm:py-8 lg:px-8">
+      <div className="mx-auto max-w-[1760px]">
+        <div className="mb-6 flex flex-col gap-5 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/[0.025] dark:border-slate-800 dark:bg-slate-900/70 sm:p-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="mb-1 text-sm font-medium text-indigo-600 dark:text-indigo-400">
-              TASKFLOW AI / WORKSPACE
+            <p className="mb-2 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-violet-600 dark:text-violet-400">
+              <span className="inline-block h-2 w-2 rounded-full bg-violet-500" /> TASKFLOW AI <span className="text-slate-300 dark:text-slate-700">/</span> WORKSPACE
             </p>
 
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            <h1 className="text-2xl font-extrabold tracking-tight text-slate-950 dark:text-white sm:text-3xl">
               {projectName}
             </h1>
 
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-500 dark:text-slate-400">
               Create tasks, manage priorities, and drag tasks between columns.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <label className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 dark:border-slate-800 dark:bg-slate-900">
+            <label className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 transition focus-within:border-violet-400 focus-within:ring-4 focus-within:ring-violet-500/10 dark:border-slate-700 dark:bg-slate-950">
               <span className="text-slate-400" aria-hidden="true">
                 ⌕
               </span>
@@ -356,7 +356,7 @@ export default function ProjectBoard({
               type="button"
               onClick={() => void refresh()}
               disabled={loading}
-              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:hover:bg-slate-900"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               {loading ? "Refreshing…" : "Refresh"}
             </button>
@@ -364,14 +364,14 @@ export default function ProjectBoard({
             <button
               type="button"
               onClick={openCreateModal}
-              className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+              className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-violet-600/20 transition hover:-translate-y-0.5 hover:from-violet-700 hover:to-indigo-700"
             >
               + Create task
             </button>
           </div>
         </div>
 
-        <div className="mb-5 rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+        <div className="mb-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm shadow-slate-900/[0.02] dark:border-slate-800 dark:bg-slate-900/70 sm:p-5">
           <div className="mb-2 flex items-center justify-between gap-3 text-sm">
             <span className="text-slate-600 dark:text-slate-300">
               Project progress
@@ -384,7 +384,7 @@ export default function ProjectBoard({
 
           <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
             <div
-              className="h-full rounded-full bg-indigo-600 transition-all"
+              className="h-full rounded-full bg-gradient-to-r from-violet-500 via-indigo-500 to-sky-500 transition-all duration-500"
               style={{ width: `${completion}%` }}
             />
           </div>
@@ -414,7 +414,7 @@ export default function ProjectBoard({
         )}
 
         {loading && tasks.length === 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
             {columns.map((column) => (
               <div
                 key={column.status}
@@ -423,7 +423,7 @@ export default function ProjectBoard({
             ))}
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
             {columns.map((column) => (
               <TaskColumn
                 key={column.status}

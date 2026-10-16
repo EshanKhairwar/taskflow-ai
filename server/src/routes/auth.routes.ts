@@ -493,45 +493,68 @@ router.post("/verify-email", async (req, res, next) => {
 router.post("/resend-verification", async (req, res, next) => {
   try {
     const parsed = resendVerificationSchema.safeParse(req.body);
+
     if (!parsed.success) {
-      res.status(400).json({ message: "Enter a valid email address." });
+      res.status(400).json({
+        message: "Enter a valid email address.",
+      });
       return;
     }
 
     const email = parsed.data.email.toLowerCase();
-    const genericMessage = "If this account exists and needs verification, a code will be sent shortly.";
+
+    const genericMessage =
+      "If this account exists and needs verification, a code will be sent shortly.";
+
     const user = await User.findOne({ email }).select(
       "+emailOtpHash +emailOtpExpiresAt +emailOtpAttempts +emailOtpLastSentAt"
     );
 
-    // Use a generic response to avoid disclosing whether an email is registered.
+    // Keep the response generic to avoid revealing account existence.
     if (!user || user.emailVerified) {
       res.json({ message: genericMessage });
       return;
     }
 
+    // Enforce the resend cooldown.
     if (
       user.emailOtpLastSentAt &&
-      Date.now() - user.emailOtpLastSentAt.getTime() < OTP_RESEND_COOLDOWN_MS
+      Date.now() - user.emailOtpLastSentAt.getTime() <
+        OTP_RESEND_COOLDOWN_MS
     ) {
-      res.status(429).json({ message: "Please wait 60 seconds before requesting another code." });
+      res.status(429).json({
+        message:
+          "Please wait 60 seconds before requesting another code.",
+      });
       return;
     }
 
+    // Generate a new OTP.
     const otp = generateOtp();
+
+    // Send the email BEFORE changing the saved OTP.
+    try {
+      await sendVerificationOtp(user.email, user.name, otp);
+    } catch (emailError) {
+      console.error(
+        "Verification email could not be resent:",
+        emailError
+      );
+
+      res.status(503).json({
+        message:
+          "Unable to send verification email right now. Please try again later.",
+      });
+      return;
+    }
+
+    // Only update the OTP state after the email service succeeds.
     user.emailOtpHash = hashOtp(otp);
     user.emailOtpExpiresAt = new Date(Date.now() + OTP_TTL_MS);
     user.emailOtpAttempts = 0;
     user.emailOtpLastSentAt = new Date();
-    await user.save();
 
-    try {
-      await sendVerificationOtp(user.email, user.name, otp);
-    } catch (emailError) {
-      console.error("Verification email could not be resent:", emailError);
-      res.status(503).json({ message: "Unable to send verification email right now. Please try again later." });
-      return;
-    }
+    await user.save();
 
     res.json({ message: genericMessage });
   } catch (error) {

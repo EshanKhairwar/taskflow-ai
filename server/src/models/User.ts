@@ -1,3 +1,4 @@
+
 import mongoose, { Schema, type InferSchemaType } from "mongoose";
 
 const userSchema = new Schema(
@@ -17,11 +18,23 @@ const userSchema = new Schema(
       trim: true,
       maxlength: 254,
     },
+
+    // Optional for Firebase-managed passwords.
+    // Existing password-based accounts remain compatible.
     passwordHash: {
       type: String,
-      required: true,
+      required: false,
       select: false,
     },
+
+    // Firebase Authentication identity.
+    firebaseUid: {
+      type: String,
+      unique: true,
+      sparse: true,
+      select: false,
+    },
+
     avatarUrl: {
       type: String,
       default: "",
@@ -31,23 +44,16 @@ const userSchema = new Schema(
       default: false,
       required: true,
     },
-    emailOtpHash: {
-      type: String,
-      select: false,
-    },
-    emailOtpExpiresAt: {
-      type: Date,
-      select: false,
-    },
+
+    // Legacy OTP fields retained during migration.
+    emailOtpHash: { type: String, select: false },
+    emailOtpExpiresAt: { type: Date, select: false },
     emailOtpAttempts: {
       type: Number,
       default: 0,
       select: false,
     },
-    emailOtpLastSentAt: {
-      type: Date,
-      select: false,
-    },
+    emailOtpLastSentAt: { type: Date, select: false },
   },
   { timestamps: true },
 );

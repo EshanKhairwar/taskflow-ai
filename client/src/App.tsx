@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 
 import { apiRequest } from "./api/client";
+import { logoutUser } from "./api/auth.api";
 
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Signup";
@@ -406,9 +407,7 @@ export default function App() {
     setLogoutError("");
 
     try {
-      await apiRequest<{ message?: string }>("/auth/logout", {
-        method: "POST",
-      });
+      await logoutUser();
 
       setIsAuthenticated(false);
       setCurrentUser(null);

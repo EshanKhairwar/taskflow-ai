@@ -11,8 +11,30 @@ import Project from "../models/Project.js";
 import { authenticate, type AuthRequest } from "../middleware/authenticate.js";
 
 import { logActivity } from "../services/activity.service.js";
+import { emitProjectEvent } from "../socket.server.js";
 
 const router = Router();
+
+/** Notify connected project members after a successful database mutation. */
+function broadcastTaskChange(
+  projectId: string,
+  action: "created" | "updated" | "moved" | "deleted",
+  taskId: string,
+  actorId: string,
+): void {
+  try {
+    emitProjectEvent(projectId, "project:task-changed", {
+      projectId,
+      taskId,
+      action,
+      actorId,
+      occurredAt: new Date().toISOString(),
+    });
+  } catch (error) {
+    // Real-time delivery must never make a successful REST request fail.
+    console.error("[Socket] Could not broadcast task change:", error);
+  }
+}
 
 const statuses = ["todo", "in_progress", "in_review", "done"] as const;
 
@@ -512,6 +534,7 @@ router.post("/projects/:projectId/tasks", authenticate, async (req, res, next) =
 
     }
 
+    broadcastTaskChange(project._id.toString(), "created", task._id.toString(), userId);
     res.status(201).json({ task });
 
   } catch (error) {
@@ -816,6 +839,7 @@ router.patch("/tasks/:id", authenticate, async (req, res, next) => {
 
     }
 
+    broadcastTaskChange(task.project.toString(), "updated", task._id.toString(), userId);
     res.json({ task });
 
   } catch (error) {
@@ -920,6 +944,7 @@ router.patch("/tasks/:id/move", authenticate, async (req, res, next) => {
 
     }
 
+    broadcastTaskChange(task.project.toString(), "moved", task._id.toString(), userId);
     res.json({ task });
 
   } catch (error) {
@@ -1021,6 +1046,8 @@ router.delete("/tasks/:id", authenticate, async (req, res, next) => {
     } catch (activityError) {
       console.error("[Activity] Failed to log task deletion:", activityError);
     }
+
+    broadcastTaskChange(task.project.toString(), "deleted", task._id.toString(), userId);
 
     res.json({
 

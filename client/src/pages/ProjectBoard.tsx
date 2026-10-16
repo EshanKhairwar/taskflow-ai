@@ -343,6 +343,19 @@ export default function ProjectBoard({
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            <span
+              className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold ${
+                socketStatus === "connected"
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300"
+                  : socketStatus === "error"
+                    ? "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-300"
+                    : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300"
+              }`}
+              title="Real-time task updates"
+            >
+              <span className={`h-2 w-2 rounded-full ${socketStatus === "connected" ? "bg-emerald-500" : socketStatus === "error" ? "bg-rose-500" : "bg-amber-500"}`} />
+              {socketStatus === "connected" ? "Live connected" : socketStatus === "error" ? "Live connection error" : socketStatus === "connecting" ? "Connecting live…" : "Live disconnected"}
+            </span>
             <label className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 transition focus-within:border-violet-400 focus-within:ring-4 focus-within:ring-violet-500/10 dark:border-slate-700 dark:bg-slate-950">
               <span className="text-slate-400" aria-hidden="true">
                 ⌕
@@ -356,14 +369,6 @@ export default function ProjectBoard({
                 aria-label="Search tasks"
               />
             </label>
-
-            <span
-              className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold ${socketStatus === "connected" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" : socketStatus === "error" ? "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300" : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"}`}
-              title={`Live collaboration: ${socketStatus}`}
-            >
-              <span className={`h-2 w-2 rounded-full ${socketStatus === "connected" ? "bg-emerald-500" : socketStatus === "error" ? "bg-rose-500" : "bg-slate-400"}`} />
-              {socketStatus === "connected" ? "Live connected" : socketStatus === "error" ? "Live unavailable" : "Connecting live"}
-            </span>
 
             <button
               type="button"
@@ -432,14 +437,6 @@ export default function ProjectBoard({
             className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-300"
           >
             <span>{error}</span>
-
-            <span
-              className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold ${socketStatus === "connected" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" : socketStatus === "error" ? "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300" : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"}`}
-              title={`Live collaboration: ${socketStatus}`}
-            >
-              <span className={`h-2 w-2 rounded-full ${socketStatus === "connected" ? "bg-emerald-500" : socketStatus === "error" ? "bg-rose-500" : "bg-slate-400"}`} />
-              {socketStatus === "connected" ? "Live connected" : socketStatus === "error" ? "Live unavailable" : "Connecting live"}
-            </span>
 
             <button
               type="button"

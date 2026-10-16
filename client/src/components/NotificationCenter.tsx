@@ -34,7 +34,7 @@ function getId(item: NotificationItem): string {
 }
 
 function isNotificationRead(item: NotificationItem): boolean {
-  return Boolean(item.readAt);
+  return Boolean(item.readAt || item.isRead);
 }
 
 function getUnreadCount(response: CountResponse): number {

@@ -1,23 +1,48 @@
-const API_URL =
-  import.meta.env.VITE_API_URL ?? "http://localhost:5000/api/v1";
+const configuredApiUrl = import.meta.env.VITE_API_URL;
 
+const API_URL = (configuredApiUrl || "http://localhost:5000/api/v1").replace(
+  /\/+$/,
+  "",
+);
 export async function apiRequest<T>(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  let response: Response;
 
-  const data = await response.json().catch(() => ({}));
+  try {
+    response = await fetch(`${API_URL}${normalizedPath}`, {
+      ...options,
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        ...(options.body ? { "Content-Type": "application/json" } : {}),
+        ...options.headers,
+      },
+    });
+  } catch {
+    throw new Error(
+      "Cannot reach TaskFlow AI server. Check your connection and API URL.",
+    );
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+  const data: unknown = contentType.includes("application/json")
+    ? await response.json().catch(() => ({}))
+    : await response.text().catch(() => "");
 
   if (!response.ok) {
-    throw new Error(data.message ?? "Request failed");
+    const message =
+      typeof data === "object" &&
+      data !== null &&
+      "message" in data &&
+      typeof (data as { message?: unknown }).message === "string"
+        ? (data as { message: string }).message
+        : typeof data === "string" && data.trim()
+          ? data.slice(0, 240)
+          : `Request failed (${response.status})`;
+    throw new Error(message);
   }
 
   return data as T;

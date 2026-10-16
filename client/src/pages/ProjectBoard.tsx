@@ -251,9 +251,11 @@ export default function ProjectBoard({
 
       status: form.status,
 
-      dueDate: form.dueDate
-        ? new Date(`${form.dueDate}T12:00:00`).toISOString()
-        : null,
+      ...(form.dueDate
+        ? { dueDate: new Date(`${form.dueDate}T12:00:00`).toISOString() }
+        : editingTask
+          ? { dueDate: null }
+          : {}),
     };
 
     // Updates must send null to explicitly clear an existing assignee.

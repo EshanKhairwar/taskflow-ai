@@ -26,6 +26,28 @@ const userSchema = new Schema(
       type: String,
       default: "",
     },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
+    emailOtpHash: {
+      type: String,
+      select: false,
+    },
+    emailOtpExpiresAt: {
+      type: Date,
+      select: false,
+    },
+    emailOtpAttempts: {
+      type: Number,
+      default: 0,
+      select: false,
+    },
+    emailOtpLastSentAt: {
+      type: Date,
+      select: false,
+    },
   },
   { timestamps: true },
 );

@@ -176,3 +176,13 @@ html.dark .shadow-slate-200\/60 {
 :focus-visible {
   outline-color: #60a5fa;
 }
+
+/* Dark-theme search fields: keep placeholder and typed text distinguishable. */
+.workspace-search-input {
+  color: #0f172a !important;
+  caret-color: #2563eb;
+}
+.workspace-search-input::placeholder {
+  color: #64748b !important;
+  opacity: 1;
+}

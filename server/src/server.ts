@@ -4,6 +4,7 @@ import { createServer } from "node:http";
 import app from "./app.js";
 import { connectDatabase } from "./config/database.js";
 import { initSocketServer } from "./socket.server.js";
+import { startTaskReminderScheduler } from "./services/taskReminder.service.js";
 
 const port = Number(process.env.PORT ?? 5000);
 
@@ -13,6 +14,7 @@ async function startServer() {
   const httpServer = createServer(app);
 
   initSocketServer(httpServer);
+  startTaskReminderScheduler();
 
   httpServer.listen(port, () => {
     console.log(`TaskFlow API running on port ${port}`);

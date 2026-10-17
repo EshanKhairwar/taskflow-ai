@@ -31,6 +31,8 @@ const notificationSchema = new Schema(
         "comment.added",
         "project.member_added",
         "project.member_removed",
+        "task.reminder_due_soon",
+        "task.reminder_overdue",
       ],
       required: true,
     },
@@ -45,12 +47,19 @@ const notificationSchema = new Schema(
       default: null,
       index: true,
     },
+    // Stable key prevents duplicate scheduled reminders across scheduler ticks.
+    reminderKey: {
+      type: String,
+      default: undefined,
+      select: false,
+    },
   },
   { timestamps: true }
 );
 
 notificationSchema.index({ recipient: 1, createdAt: -1 });
 notificationSchema.index({ recipient: 1, readAt: 1, createdAt: -1 });
+notificationSchema.index({ reminderKey: 1 }, { unique: true, sparse: true });
 
 const Notification =
   mongoose.models.Notification ||

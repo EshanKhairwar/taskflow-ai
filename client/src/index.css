@@ -1,6 +1,9 @@
 
 @import "tailwindcss";
 
+/* Make Tailwind v4 dark: utilities follow the app-controlled .dark class. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 
 /* Allow the document to grow beyond the browser viewport so lower content
    remains reachable above the Windows taskbar with normal page scrolling. */

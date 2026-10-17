@@ -30,8 +30,6 @@ import {
   CalendarDays,
   BarChart3,
   X,
-  Sun,
-  Moon,
 } from "lucide-react";
 
 import { apiRequest } from "./api/client";
@@ -220,21 +218,6 @@ export default function App() {
   const [search, setSearch] = useState("");
 
   const [activeNav, setActiveNav] = useState("Overview");
-
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    try {
-      return localStorage.getItem("taskflow-theme") === "dark" ? "dark" : "light";
-    } catch {
-      return "light";
-    }
-  });
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    document.documentElement.style.colorScheme = theme;
-    try { localStorage.setItem("taskflow-theme", theme); } catch { /* storage may be unavailable */ }
-  }, [theme]);
-
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -949,15 +932,6 @@ export default function App() {
         </div>
 
         <div className="mt-auto space-y-1 border-t border-slate-100 pt-5">
-          <button
-            type="button"
-            onClick={() => setTheme((current) => current === "dark" ? "light" : "dark")}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-            className="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-          >
-            <span className="flex items-center gap-3">{theme === "dark" ? <Sun size={18} /> : <Moon size={18} />} {theme === "dark" ? "Light mode" : "Dark mode"}</span>
-            <span className={`relative h-5 w-9 rounded-full transition ${theme === "dark" ? "bg-violet-600" : "bg-slate-300"}`}><span className={`absolute top-0.5 size-4 rounded-full bg-white shadow transition ${theme === "dark" ? "left-[18px]" : "left-0.5"}`} /></span>
-          </button>
           <button
             onClick={() => setActiveNav("Settings")}
             className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-500 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"

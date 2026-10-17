@@ -11,6 +11,8 @@ import {
   FolderKanban,
   RefreshCw,
   Target,
+  Users,
+  UserRound,
 } from "lucide-react";
 import { apiRequest } from "../api/client";
 
@@ -49,6 +51,30 @@ interface TaskListResponse {
 interface ProjectTasks {
   project: Project;
   tasks: AnalyticsTask[];
+}
+
+interface TeamMemberMetric {
+  userId: string;
+  name: string;
+  email: string;
+  projectCount: number;
+  assigned: number;
+  completed: number;
+  inProgress: number;
+  inReview: number;
+  overdue: number;
+  highPriority: number;
+  completionRate: number;
+}
+
+interface TeamProductivityResponse {
+  summary?: {
+    members: number;
+    assigned: number;
+    completed: number;
+    overdue: number;
+  };
+  members?: TeamMemberMetric[];
 }
 
 interface AnalyticsDashboardProps {
@@ -139,6 +165,9 @@ export default function AnalyticsDashboard({
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
+  const [teamMetrics, setTeamMetrics] = useState<TeamMemberMetric[]>([]);
+  const [teamLoading, setTeamLoading] = useState(true);
+  const [teamError, setTeamError] = useState("");
 
   const loadAnalytics = useCallback(async (showRefresh = false) => {
     if (showRefresh) setRefreshing(true);
@@ -188,6 +217,30 @@ export default function AnalyticsDashboard({
   useEffect(() => {
     void loadAnalytics();
   }, [loadAnalytics]);
+
+  const loadTeamProductivity = useCallback(async () => {
+    setTeamLoading(true);
+    setTeamError("");
+    try {
+      const response = await apiRequest<TeamProductivityResponse>(
+        "/analytics/team-productivity",
+        { method: "GET" },
+      );
+      setTeamMetrics(Array.isArray(response.members) ? response.members : []);
+    } catch (err) {
+      setTeamError(
+        err instanceof Error
+          ? err.message
+          : "Could not load team productivity.",
+      );
+    } finally {
+      setTeamLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadTeamProductivity();
+  }, [loadTeamProductivity]);
 
   const tasks = useMemo(
     () => projectTasks.flatMap((item) => item.tasks),
@@ -383,6 +436,93 @@ export default function AnalyticsDashboard({
               </div>
             </section>
           </div>
+
+          <section className="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+              <div>
+                <p className="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-[0.16em] text-violet-600">
+                  <Users size={14} /> TEAM PERFORMANCE
+                </p>
+                <h2 className="text-base font-bold text-slate-900">Team productivity</h2>
+                <p className="mt-1 text-xs leading-5 text-slate-500">
+                  Assigned workload, completion, and overdue tasks for members in your accessible projects.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => void loadTeamProductivity()}
+                disabled={teamLoading}
+                className="inline-flex items-center justify-center gap-2 self-start rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60"
+              >
+                <RefreshCw size={13} className={teamLoading ? "animate-spin" : ""} />
+                Refresh team
+              </button>
+            </div>
+
+            {teamError ? (
+              <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+                <p>{teamError}</p>
+                <button type="button" onClick={() => void loadTeamProductivity()} className="mt-2 font-semibold underline">Try again</button>
+              </div>
+            ) : teamLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((item) => <div key={item} className="h-16 animate-pulse rounded-xl bg-slate-100" />)}
+              </div>
+            ) : teamMetrics.length ? (
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[680px] text-left">
+                  <thead>
+                    <tr className="border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      <th className="px-3 py-3">Team member</th>
+                      <th className="px-3 py-3">Assigned</th>
+                      <th className="px-3 py-3">Completed</th>
+                      <th className="px-3 py-3">In progress</th>
+                      <th className="px-3 py-3">Overdue</th>
+                      <th className="px-3 py-3">Completion</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {teamMetrics.map((member) => (
+                      <tr key={member.userId} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/70">
+                        <td className="px-3 py-3">
+                          <div className="flex items-center gap-3">
+                            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-violet-100 text-xs font-bold text-violet-700">
+                              {member.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0] ?? "").join("").toUpperCase() || <UserRound size={15} />}
+                            </span>
+                            <span className="min-w-0">
+                              <span className="block max-w-[190px] truncate text-sm font-semibold text-slate-800">{member.name}</span>
+                              <span className="block max-w-[190px] truncate text-[11px] text-slate-400">{member.projectCount} project{member.projectCount === 1 ? "" : "s"}</span>
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-3 py-3 text-sm font-semibold tabular-nums text-slate-700">{member.assigned}</td>
+                        <td className="px-3 py-3 text-sm font-semibold tabular-nums text-emerald-700">{member.completed}</td>
+                        <td className="px-3 py-3 text-sm font-semibold tabular-nums text-sky-700">{member.inProgress}</td>
+                        <td className="px-3 py-3">
+                          <span className={`rounded-lg px-2 py-1 text-xs font-bold tabular-nums ${member.overdue ? "bg-rose-50 text-rose-700" : "bg-slate-100 text-slate-500"}`}>{member.overdue}</span>
+                        </td>
+                        <td className="px-3 py-3">
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-20 overflow-hidden rounded-full bg-slate-100">
+                              <div className="h-full rounded-full bg-violet-500" style={{ width: `${member.completionRate}%` }} />
+                            </div>
+                            <span className="text-xs font-bold tabular-nums text-slate-600">{member.completionRate}%</span>
+                          </div>
+                          {member.highPriority > 0 && <span className="mt-1 block text-[10px] font-medium text-rose-600">{member.highPriority} high priority</span>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed border-slate-200 px-4 py-8 text-center">
+                <Users size={22} className="mx-auto text-slate-300" />
+                <p className="mt-2 text-sm font-semibold text-slate-700">No team members found</p>
+                <p className="mt-1 text-xs text-slate-400">Add team members to your projects and assign tasks to see productivity metrics.</p>
+              </div>
+            )}
+          </section>
 
           <div className="mb-5 grid items-start gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">

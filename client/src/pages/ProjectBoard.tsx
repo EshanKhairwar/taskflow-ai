@@ -13,6 +13,7 @@ import ProjectTeamPanel from "../components/projects/ProjectTeamPanel";
 import AiTaskAssistant from "../components/tasks/AiTaskAssistant";
 import AiProjectCopilot from "../components/tasks/AiProjectCopilot";
 import TaskComments from "../components/tasks/TaskComments";
+import SmartSchedulePanel from "../components/tasks/SmartSchedulePanel";
 
 import {
   getProjectMembers,
@@ -447,6 +448,8 @@ export default function ProjectBoard({
             </button>
           </div>
         )}
+
+        <SmartSchedulePanel tasks={tasks} />
 
         {loading && tasks.length === 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">

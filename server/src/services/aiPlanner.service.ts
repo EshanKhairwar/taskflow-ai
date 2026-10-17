@@ -123,6 +123,7 @@ function parseJsonContent(content: string): unknown {
 async function requestFromProvider(
   provider: ProviderConfig,
   prompt: string,
+  systemPrompt: string = SYSTEM_PROMPT,
 ): Promise<TaskSuggestion> {
   if (!provider.apiKey) {
     throw new ProviderRequestError(
@@ -147,7 +148,7 @@ async function requestFromProvider(
         body: JSON.stringify({
           model: provider.model,
           messages: [
-            { role: "system", content: SYSTEM_PROMPT },
+            { role: "system", content: systemPrompt },
             { role: "user", content: prompt },
           ],
           temperature: 0.2,
@@ -389,6 +390,78 @@ export async function generateProjectPlan(
     } catch (error) {
       const failure = error instanceof Error ? error.message : "Unknown provider error";
       console.warn(`[AI Planner] ${provider.name} project plan failed: ${failure}`);
+      failures.push(`${provider.name}: ${failure}`);
+      if (!(error instanceof ProviderRequestError) || !error.retryable) {
+        throw new Error(failure);
+      }
+    }
+  }
+  throw new Error(`All configured AI providers failed. ${failures.join(" | ")}`);
+}
+
+
+export type TaskAssistantMode = "draft" | "improve" | "breakdown" | "priority";
+
+const TASK_ASSISTANT_PROMPTS: Record<TaskAssistantMode, string> = {
+  draft: `
+You are TaskFlow AI, a practical project management assistant.
+Return only a JSON object with exactly: title, description, priority, subtasks.
+title: 2-150 characters. description: up to 5000 characters.
+priority: low, medium, or high. subtasks: 3-6 actionable strings, each at most 250 characters.
+Turn the user's idea into one clear, actionable task draft. Do not save anything.
+No markdown fences or extra properties.
+`.trim(),
+  improve: `
+You are TaskFlow AI, improving an existing project task.
+Return only a JSON object with exactly: title, description, priority, subtasks.
+Rewrite the supplied task title and description to be specific, clear, actionable, and outcome-oriented while preserving its intent.
+priority must be low, medium, or high. Include 3-6 actionable subtasks.
+Do not invent project facts, do not save anything, and return no markdown or extra properties.
+`.trim(),
+  breakdown: `
+You are TaskFlow AI, breaking a complex task into manageable steps.
+Return only a JSON object with exactly: title, description, priority, subtasks.
+Preserve the task's intent in title and description. Set a reasonable priority (low, medium, or high).
+Create 3-6 ordered, concrete subtasks that can be completed and checked independently.
+Do not claim subtasks are saved. No markdown fences or extra properties.
+`.trim(),
+  priority: `
+You are TaskFlow AI, assessing a project task's priority.
+Return only a JSON object with exactly: title, description, priority, subtasks.
+Preserve the task's title and description, choose low, medium, or high based only on the information supplied, and explain the rationale briefly in the description.
+Include 3-6 useful next-step subtasks. Do not invent deadlines or urgency not stated by the user.
+No markdown fences or extra properties.
+`.trim(),
+};
+
+/** Runs a task-focused assistant action and returns a draft for the user to review. */
+export async function assistWithTask(
+  mode: TaskAssistantMode,
+  prompt: string,
+): Promise<TaskSuggestion> {
+  const cleanPrompt = prompt.trim();
+  if (cleanPrompt.length < 5 || cleanPrompt.length > 2000) {
+    throw new Error("Task assistant prompt must contain 5–2000 characters.");
+  }
+
+  const configuredProviders = providers.filter((provider) => Boolean(provider.apiKey));
+  if (configuredProviders.length === 0) {
+    throw new Error("AI_NOT_CONFIGURED");
+  }
+
+  const failures: string[] = [];
+  for (const provider of configuredProviders) {
+    try {
+      const task = await requestFromProvider(
+        provider,
+        cleanPrompt,
+        TASK_ASSISTANT_PROMPTS[mode],
+      );
+      console.info(`[AI Task Assistant] ${mode} completed using ${provider.name}.`);
+      return task;
+    } catch (error) {
+      const failure = error instanceof Error ? error.message : "Unknown provider error";
+      console.warn(`[AI Task Assistant] ${provider.name} failed: ${failure}`);
       failures.push(`${provider.name}: ${failure}`);
       if (!(error instanceof ProviderRequestError) || !error.retryable) {
         throw new Error(failure);

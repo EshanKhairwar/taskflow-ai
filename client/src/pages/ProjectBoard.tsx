@@ -10,7 +10,7 @@ import TaskColumn from "../components/tasks/TaskColumn";
 
 import ProjectTeamPanel from "../components/projects/ProjectTeamPanel";
 
-import AiTaskPlanner from "../components/tasks/AiTaskPlanner";
+import AiTaskAssistant from "../components/tasks/AiTaskAssistant";
 import AiProjectCopilot from "../components/tasks/AiProjectCopilot";
 import TaskComments from "../components/tasks/TaskComments";
 
@@ -529,7 +529,7 @@ export default function ProjectBoard({
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {!editingTask && (
-                <AiTaskPlanner
+                <AiTaskAssistant
                   projectId={projectId}
                   onUseSuggestion={(suggestion) => {
                     setForm((previous) => ({

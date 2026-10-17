@@ -135,3 +135,40 @@ export async function generateProjectPlan(
     tasks,
   };
 }
+
+
+export type TaskAssistantMode = "draft" | "improve" | "breakdown" | "priority";
+
+export async function assistWithTask(
+  projectId: string,
+  prompt: string,
+  mode: TaskAssistantMode,
+): Promise<GeneratedTask> {
+  const cleanPrompt = prompt.trim();
+  if (!projectId) throw new Error("Project ID is required.");
+  if (cleanPrompt.length < 5 || cleanPrompt.length > 2000) {
+    throw new Error("Please enter 5–2000 characters.");
+  }
+
+  const response = await apiRequest<GenerateTaskResponse>("/ai/assist-task", {
+    method: "POST",
+    body: JSON.stringify({ projectId, prompt: cleanPrompt, mode }),
+  });
+
+  if (
+    !response.task ||
+    typeof response.task.title !== "string" ||
+    !Array.isArray(response.task.subtasks)
+  ) {
+    throw new Error("AI returned an invalid task suggestion.");
+  }
+
+  return {
+    title: response.task.title,
+    description: response.task.description ?? "",
+    priority: response.task.priority,
+    subtasks: response.task.subtasks.filter(
+      (item): item is string => typeof item === "string",
+    ),
+  };
+}

@@ -8,7 +8,7 @@ import {
   authenticate,
   type AuthRequest,
 } from "../middleware/authenticate.js";
-import { generateProjectPlan, generateTaskSuggestion } from "../services/aiPlanner.service.js";
+import { assistWithTask, generateProjectPlan, generateTaskSuggestion, type TaskAssistantMode } from "../services/aiPlanner.service.js";
 
 const router = Router();
 
@@ -232,6 +232,89 @@ router.post(
       next(error);
     }
   }
+);
+
+
+
+const taskAssistantSchema = z.object({
+  projectId: z.string().refine(mongoose.isValidObjectId, {
+    message: "Invalid MongoDB project ID",
+  }),
+  prompt: z.string().trim().min(5).max(2000),
+  mode: z.enum(["draft", "improve", "breakdown", "priority"]),
+}).strict();
+
+router.post(
+  "/assist-task",
+  authenticate,
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: "Too many AI assistant requests. Please try again later." },
+  }),
+  async (req, res, next) => {
+    try {
+      const userId = getUserId(req);
+      if (!userId) {
+        res.status(401).json({ message: "Authentication required" });
+        return;
+      }
+
+      const parsed = taskAssistantSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          message: "Invalid task assistant request. Check project ID, mode, and prompt length.",
+          errors: parsed.error.flatten(),
+        });
+        return;
+      }
+
+      const { projectId, prompt, mode } = parsed.data;
+      const project = await Project.findOne({
+        _id: projectId,
+        $or: [{ owner: userId }, { "members.user": userId }],
+      }).select("_id").maxTimeMS(5000);
+
+      if (!project) {
+        res.status(404).json({ message: "Project not found or access denied" });
+        return;
+      }
+
+      const task = await assistWithTask(mode as TaskAssistantMode, prompt);
+      res.status(200).json({
+        message: "AI task suggestion generated. Review it before applying.",
+        task,
+      });
+    } catch (error: unknown) {
+      const status = getErrorStatus(error);
+      console.error("[AI Task Assistant] Request failed", {
+        message: error instanceof Error ? error.message : "Unknown error",
+        status,
+        name: error instanceof Error ? error.name : "UnknownError",
+      });
+
+      if (res.headersSent) return next(error);
+      if (error instanceof Error && error.message === "AI_NOT_CONFIGURED") {
+        res.status(503).json({ message: "AI service is not configured. Configure GROQ_API_KEY or MISTRAL_API_KEY." });
+        return;
+      }
+      if (isTimeoutError(error)) {
+        res.status(504).json({ message: "The AI request timed out. Please try again." });
+        return;
+      }
+      if (status === 429 || status === 503 || isConnectionError(error)) {
+        res.status(503).json({ message: "AI providers are temporarily unavailable. Please try again shortly." });
+        return;
+      }
+      if (error instanceof Error && /invalid.*(json|structure|response)/i.test(error.message)) {
+        res.status(502).json({ message: "AI returned an invalid task suggestion. Please try again." });
+        return;
+      }
+      next(error);
+    }
+  },
 );
 
 

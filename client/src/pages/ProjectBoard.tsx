@@ -14,6 +14,7 @@ import AiTaskAssistant from "../components/tasks/AiTaskAssistant";
 import AiProjectCopilot from "../components/tasks/AiProjectCopilot";
 import TaskComments from "../components/tasks/TaskComments";
 import SmartSchedulePanel from "../components/tasks/SmartSchedulePanel";
+import TaskRecommendationPanel from "../components/tasks/TaskRecommendationPanel";
 
 import {
   getProjectMembers,
@@ -299,6 +300,15 @@ export default function ProjectBoard({
     }
   }
 
+  async function applyRecommendedDueDate(taskId: string, dueDate: string) {
+    await update(taskId, { dueDate } as CreateTaskInput);
+  }
+
+  async function applyRecommendedAssignee(taskId: string, assigneeId: string) {
+    await update(taskId, { assignee: assigneeId } as CreateTaskInput);
+    await refreshProjectMembers();
+  }
+
   async function handleDelete(task: Task) {
     const confirmed = window.confirm(
       `Delete “${task.title}”? This action cannot be undone.`,
@@ -449,7 +459,7 @@ export default function ProjectBoard({
           </div>
         )}
 
-        <SmartSchedulePanel tasks={tasks} />
+        <SmartSchedulePanel tasks={tasks} />\n\n        <TaskRecommendationPanel tasks={tasks} members={projectMembers} onApplyDueDate={applyRecommendedDueDate} onApplyAssignee={applyRecommendedAssignee} />
 
         {loading && tasks.length === 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">

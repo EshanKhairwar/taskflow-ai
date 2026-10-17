@@ -174,14 +174,32 @@ function formatRelativeTime(date?: string) {
 
 export default function App() {
   const [timeGreeting, setTimeGreeting] = useState<string>(getTimeBasedGreeting);
+  const [currentDateTime, setCurrentDateTime] = useState<Date>(() => new Date());
 
   useEffect(() => {
-    // Update while the app stays open, so the greeting changes at the right time.
-    const updateGreeting = () => setTimeGreeting(getTimeBasedGreeting());
-    updateGreeting();
-    const intervalId = window.setInterval(updateGreeting, 60_000);
+    // Keep the greeting, clock, and date in sync with the browser's local time.
+    const updateDateTime = () => {
+      const now = new Date();
+      setTimeGreeting(getTimeBasedGreeting());
+      setCurrentDateTime(now);
+    };
+
+    updateDateTime();
+    const intervalId = window.setInterval(updateDateTime, 1_000);
     return () => window.clearInterval(intervalId);
   }, []);
+
+  const liveTime = currentDateTime.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  const liveDayAndDate = currentDateTime.toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
   // Verify the existing HTTP-only cookie before deciding which page to show.
   console.log("🚀 App component rendered. Checking authentication status...");
 
@@ -1638,9 +1656,27 @@ export default function App() {
                   {timeGreeting} <span className="text-blue-500">✦</span>
                 </h1>
 
-                <p className="mt-2 text-sm text-slate-500">
+                <p className="mt-2 text-sm text-slate-400">
                   Here’s what’s happening with your projects today.
                 </p>
+
+                <div className="mt-4 flex flex-wrap items-center gap-2.5">
+                  <div className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-3.5 py-2.5 shadow-sm">
+                    <CalendarDays size={16} className="shrink-0 text-blue-400" />
+                    <span className="text-sm font-medium text-slate-200">{liveDayAndDate}</span>
+                  </div>
+                  <div
+                    className="inline-flex items-center gap-2 rounded-xl border border-blue-500/30 bg-blue-500/10 px-3.5 py-2.5 shadow-sm"
+                    aria-label={`Current local time ${liveTime}`}
+                  >
+                    <Clock3 size={16} className="shrink-0 text-blue-400" />
+                    <time className="min-w-[5.5rem] font-mono text-sm font-semibold tabular-nums text-blue-300">
+                      {liveTime}
+                    </time>
+                    <span className="size-1.5 animate-pulse rounded-full bg-emerald-400" aria-hidden="true" />
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300">Live</span>
+                  </div>
+                </div>
               </div>
 
               <button

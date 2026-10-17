@@ -119,6 +119,18 @@ html.dark textarea::placeholder {
   color: #71829b;
 }
 
+/* The header search sits on a white background, even in the dark workspace. */
+html.dark .workspace-search-input {
+  color: #0f172a !important;
+  caret-color: #0f172a;
+}
+
+html.dark .workspace-search-input::placeholder {
+  color: #64748b !important;
+  opacity: 1;
+}
+
+
 html.dark input:focus,
 html.dark textarea:focus,
 html.dark select:focus {

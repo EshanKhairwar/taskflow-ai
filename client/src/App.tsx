@@ -1079,7 +1079,7 @@ export default function App() {
                 placeholder="Search projects..."
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                className="hidden min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-slate-400 sm:block"
+                className="workspace-search-input hidden min-w-0 flex-1 bg-transparent text-xs text-slate-900 outline-none placeholder:text-slate-500 sm:block"
               />
             </label>
 

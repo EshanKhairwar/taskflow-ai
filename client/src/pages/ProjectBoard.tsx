@@ -377,7 +377,7 @@ export default function ProjectBoard({
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search tasks..."
-                className="w-40 bg-transparent text-sm outline-none placeholder:text-slate-400 sm:w-56"
+                className="w-40 bg-transparent text-sm text-slate-100 outline-none placeholder:text-slate-500 sm:w-56"
                 aria-label="Search tasks"
               />
             </label>

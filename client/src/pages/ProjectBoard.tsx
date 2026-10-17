@@ -401,7 +401,7 @@ export default function ProjectBoard({
           </div>
         </div>
 
-        <ProjectHealthPanel tasks={tasks} projectName={projectName} />
+        <ProjectHealthPanel tasks={tasks} projectName={projectName} onOpenTask={openEditModal} />
 
         <div className="mb-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm shadow-slate-900/[0.02] dark:border-slate-800 dark:bg-slate-900/70 sm:p-5">
           <div className="mb-2 flex items-center justify-between gap-3 text-sm">

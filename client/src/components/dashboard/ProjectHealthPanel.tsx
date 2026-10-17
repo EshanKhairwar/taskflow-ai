@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Task } from "../../types";
 import {
   Activity,
@@ -13,6 +14,7 @@ import {
 type ProjectHealthPanelProps = {
   tasks: Task[];
   projectName: string;
+  onOpenTask: (task: Task) => void;
 };
 
 function startOfDay(date: Date) {
@@ -22,7 +24,9 @@ function startOfDay(date: Date) {
 export default function ProjectHealthPanel({
   tasks,
   projectName,
+  onOpenTask,
 }: ProjectHealthPanelProps) {
+  const [activeAlert, setActiveAlert] = useState<"overdue" | "due-soon" | "missing-dates" | null>(null);
   const today = startOfDay(new Date());
   const threeDaysFromNow = new Date(today);
   threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
@@ -61,21 +65,26 @@ export default function ProjectHealthPanel({
 
   const alerts = [
     overdueTasks.length > 0 ? {
-      key: "overdue", title: `${overdueTasks.length} overdue ${overdueTasks.length === 1 ? "task needs" : "tasks need"} attention`,
-      description: "Review the overdue work, update its status, or agree on a new deadline.",
+      key: "overdue" as const, title: `${overdueTasks.length} overdue ${overdueTasks.length === 1 ? "task needs" : "tasks need"} attention`,
+      description: "Open the task details to review progress or update its deadline.",
       icon: AlertTriangle, tone: "border-rose-500/25 bg-rose-500/10 text-rose-300",
+      tasks: overdueTasks,
     } : null,
     dueSoonTasks.length > 0 ? {
-      key: "due-soon", title: `${dueSoonTasks.length} ${dueSoonTasks.length === 1 ? "task is" : "tasks are"} due soon`,
-      description: "Confirm an owner and prioritize these tasks before their deadlines.",
+      key: "due-soon" as const, title: `${dueSoonTasks.length} ${dueSoonTasks.length === 1 ? "task is" : "tasks are"} due soon`,
+      description: "Open a task to confirm its owner and prioritize the next steps.",
       icon: CalendarClock, tone: "border-amber-500/25 bg-amber-500/10 text-amber-300",
+      tasks: dueSoonTasks,
     } : null,
     missingDateTasks.length > 0 ? {
-      key: "missing-dates", title: `${missingDateTasks.length} open ${missingDateTasks.length === 1 ? "task has" : "tasks have"} no due date`,
-      description: "Add realistic due dates so the team can plan and spot risks earlier.",
+      key: "missing-dates" as const, title: `${missingDateTasks.length} open ${missingDateTasks.length === 1 ? "task has" : "tasks have"} no due date`,
+      description: "Open a task to add a realistic deadline.",
       icon: CircleAlert, tone: "border-sky-500/25 bg-sky-500/10 text-sky-300",
+      tasks: missingDateTasks,
     } : null,
   ].filter((alert): alert is NonNullable<typeof alert> => Boolean(alert));
+
+  const selectedAlert = alerts.find((alert) => alert.key === activeAlert);
 
   return (
     <section className="mb-5 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 shadow-sm sm:p-5">
@@ -120,14 +129,45 @@ export default function ProjectHealthPanel({
             <div><p className="text-sm font-medium text-emerald-300">No immediate deadline risks</p><p className="mt-1 text-xs leading-5 text-slate-400">Keep task statuses current and review the project again as deadlines approach.</p></div>
           </div>
         ) : (
+          <>
           <div className="grid gap-2">
             {alerts.map(({ key, title, description, icon: Icon, tone: alertTone }) => (
-              <div key={key} className={`flex items-start gap-3 rounded-xl border p-3 ${alertTone}`}>
+              <button
+                key={key}
+                type="button"
+                onClick={() => setActiveAlert((current) => current === key ? null : key)}
+                aria-expanded={activeAlert === key}
+                className={`flex w-full items-start gap-3 rounded-xl border p-3 text-left transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-blue-500/50 ${alertTone} ${activeAlert === key ? "ring-1 ring-white/20" : ""}`}
+              >
                 <Icon className="mt-0.5 shrink-0" size={17} />
-                <div><p className="text-sm font-semibold">{title}</p><p className="mt-1 text-xs leading-5 text-slate-300">{description}</p></div>
-              </div>
+                <div className="min-w-0 flex-1"><p className="text-sm font-semibold">{title}</p><p className="mt-1 text-xs leading-5 text-slate-300">{description}</p></div>
+                <span className="shrink-0 text-xs font-semibold">{activeAlert === key ? "Hide" : "View tasks"}</span>
+              </button>
             ))}
           </div>
+          {selectedAlert && (
+            <div className="mt-3 rounded-xl border border-slate-800 bg-slate-950/50 p-3">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">Tasks needing attention</p>
+              <div className="grid gap-2">
+                {selectedAlert.tasks.map((task) => (
+                  <div key={task._id} className="flex flex-col gap-2 rounded-lg border border-slate-800 bg-slate-900/70 p-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="break-words text-sm font-semibold text-slate-100">{task.title}</p>
+                      <p className="mt-1 text-xs text-slate-400">
+                        {task.dueDate ? `Due ${new Date(task.dueDate).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}` : "No due date set"}
+                        <span className="mx-2 text-slate-600">•</span>
+                        {task.status.replaceAll("_", " ")}
+                      </p>
+                    </div>
+                    <button type="button" onClick={() => onOpenTask(task)} className="shrink-0 rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400/60">
+                      Open task
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          </>
         )}
       </div>
 

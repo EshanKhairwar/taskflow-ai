@@ -234,6 +234,7 @@ export default function App() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
   const [notificationError, setNotificationError] = useState("");
+  const [notificationToast, setNotificationToast] = useState<NotificationItem | null>(null);
   const [markingAllRead, setMarkingAllRead] = useState(false);
 
   const [projects, setProjects] = useState<Project[]>([]);
@@ -357,6 +358,7 @@ export default function App() {
 
       seenNotificationIds.current.add(id);
       setNotifications((current) => [notification, ...current].slice(0, 20));
+      setNotificationToast(notification);
 
       if (!notification.readAt) {
         setUnreadCount((count) => count + 1);
@@ -384,6 +386,13 @@ export default function App() {
       socket.disconnect();
     };
   }, [isAuthenticated, loadUnreadCount, loadNotifications]);
+
+  // Show a brief in-app toast for incoming real-time notifications.
+  useEffect(() => {
+    if (!notificationToast) return;
+    const timer = window.setTimeout(() => setNotificationToast(null), 6500);
+    return () => window.clearTimeout(timer);
+  }, [notificationToast]);
 
   async function handleNotificationsClick() {
     const willOpen = !notificationsOpen;
@@ -842,6 +851,41 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
+      {notificationToast && (
+        <div className="fixed right-4 top-4 z-[100] w-[min(380px,calc(100vw-2rem))] animate-in slide-in-from-top-2 rounded-2xl border border-slate-700 bg-slate-900 p-4 text-white shadow-2xl shadow-slate-950/30" role="status" aria-live="polite">
+          <div className="flex items-start gap-3">
+            <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-blue-500/15 text-blue-300">
+              <Bell size={18} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold">New notification</p>
+              <p className="mt-1 line-clamp-3 text-sm leading-5 text-slate-300">
+                {notificationToast.message || "You have a new TaskFlow update."}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setNotificationToast(null);
+                  setNotificationsOpen(true);
+                  void Promise.all([loadNotifications(), loadUnreadCount()]);
+                }}
+                className="mt-2 text-xs font-semibold text-blue-300 transition hover:text-blue-200"
+              >
+                View notifications
+              </button>
+            </div>
+            <button
+              type="button"
+              aria-label="Dismiss notification"
+              onClick={() => setNotificationToast(null)}
+              className="grid size-7 shrink-0 place-items-center rounded-lg text-slate-400 transition hover:bg-slate-800 hover:text-white"
+            >
+              <X size={15} />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Mobile backdrop */}
 
       {mobileMenuOpen && (

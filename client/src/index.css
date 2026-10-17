@@ -1,9 +1,23 @@
-
 @import "tailwindcss";
 
-/* Make Tailwind v4 dark: utilities follow the app-controlled .dark class. */
-@custom-variant dark (&:where(.dark, .dark *));
-
+/* TaskFlow AI: Modern SaaS dark workspace, with blue as the primary accent. */
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #0b1120;
+  color: #e5edf8;
+  --tf-bg: #0b1120;
+  --tf-panel: #111a2c;
+  --tf-panel-raised: #162238;
+  --tf-border: #26354d;
+  --tf-muted: #91a1b8;
+  --tf-text: #e5edf8;
+  --tf-blue: #3b82f6;
+}
 
 /* Allow the document to grow beyond the browser viewport so lower content
    remains reachable above the Windows taskbar with normal page scrolling. */
@@ -17,6 +31,7 @@ body,
 html {
   overflow-y: auto;
   scroll-behavior: smooth;
+  background: var(--tf-bg);
 }
 
 body {
@@ -24,8 +39,109 @@ body {
   min-width: 320px;
   overflow-x: hidden;
   overflow-y: auto;
+  background: var(--tf-bg);
+  color: var(--tf-text);
 }
 
 #root {
   min-height: 100vh;
+}
+
+/* Re-skin existing light Tailwind surfaces without changing component logic. */
+html.dark .bg-white,
+html.dark .bg-white\/90,
+html.dark .bg-white\/95 {
+  background-color: var(--tf-panel) !important;
+}
+
+html.dark .bg-slate-50,
+html.dark .bg-gray-50 {
+  background-color: var(--tf-bg) !important;
+}
+
+html.dark .bg-slate-100,
+html.dark .bg-gray-100 {
+  background-color: var(--tf-panel-raised) !important;
+}
+
+html.dark .bg-slate-200,
+html.dark .bg-gray-200 {
+  background-color: #26354d !important;
+}
+
+html.dark .bg-blue-50 { background-color: rgb(59 130 246 / 0.12) !important; }
+html.dark .bg-blue-100 { background-color: rgb(59 130 246 / 0.18) !important; }
+html.dark .bg-blue-200 { background-color: rgb(59 130 246 / 0.24) !important; }
+
+html.dark .text-slate-900,
+html.dark .text-slate-800,
+html.dark .text-slate-700,
+html.dark .text-gray-900,
+html.dark .text-gray-800,
+html.dark .text-gray-700 {
+  color: #e5edf8 !important;
+}
+
+html.dark .text-slate-600,
+html.dark .text-slate-500,
+html.dark .text-gray-600,
+html.dark .text-gray-500 {
+  color: #a6b4c8 !important;
+}
+
+html.dark .text-slate-400,
+html.dark .text-gray-400 {
+  color: #8192ab !important;
+}
+
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-slate-300,
+html.dark .border-gray-100,
+html.dark .border-gray-200,
+html.dark .border-gray-300 {
+  border-color: var(--tf-border) !important;
+}
+
+html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+html.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--tf-border) !important;
+}
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  color: var(--tf-text);
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #71829b;
+}
+
+html.dark input:focus,
+html.dark textarea:focus,
+html.dark select:focus {
+  --tw-ring-color: rgb(59 130 246 / 0.22);
+}
+
+/* Blue focus and hover treatments replace the old violet accent. */
+html.dark .hover\:bg-slate-50:hover,
+html.dark .hover\:bg-slate-100:hover,
+html.dark .hover\:bg-gray-50:hover {
+  background-color: #1a2940 !important;
+}
+
+html.dark .shadow-slate-200\/30,
+html.dark .shadow-slate-200\/60 {
+  --tw-shadow-color: rgb(0 0 0 / 0.18);
+}
+
+::selection {
+  color: #ffffff;
+  background: rgb(59 130 246 / 0.45);
+}
+
+:focus-visible {
+  outline-color: #60a5fa;
 }

@@ -34,14 +34,14 @@ export default function SmartSchedulePanel({ tasks }: Props) {
   }, [tasks]);
 
   return (
-    <section className="mb-6 overflow-hidden rounded-2xl border border-violet-200 bg-white shadow-sm dark:border-violet-900/70 dark:bg-slate-900/70">
+    <section className="mb-6 overflow-hidden rounded-2xl border border-blue-200 bg-white shadow-sm dark:border-blue-900/70 dark:bg-slate-900/70">
       <button type="button" onClick={() => setExpanded((value) => !value)} aria-expanded={expanded}
-        className="flex w-full items-center justify-between gap-3 bg-gradient-to-r from-violet-50 to-indigo-50 px-5 py-4 text-left dark:from-violet-950/40 dark:to-indigo-950/30">
+        className="flex w-full items-center justify-between gap-3 bg-gradient-to-r from-blue-50 to-sky-50 px-5 py-4 text-left dark:from-blue-950/40 dark:to-sky-950/30">
         <span className="flex items-center gap-3">
-          <span className="flex size-10 items-center justify-center rounded-xl bg-violet-600 text-white"><Sparkles size={20}/></span>
+          <span className="flex size-10 items-center justify-center rounded-xl bg-blue-600 text-white"><Sparkles size={20}/></span>
           <span><span className="block font-bold text-slate-900 dark:text-white">Smart Schedule</span><span className="block text-xs text-slate-600 dark:text-slate-400">Deadline risk and workload recommendations</span></span>
         </span>
-        <span className="flex items-center gap-2 text-xs font-semibold text-violet-700 dark:text-violet-300">{expanded ? "Hide insights" : "Show insights"} {expanded ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}</span>
+        <span className="flex items-center gap-2 text-xs font-semibold text-blue-700 dark:text-blue-300">{expanded ? "Hide insights" : "Show insights"} {expanded ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}</span>
       </button>
       {expanded && <div className="p-5">
         <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -66,7 +66,7 @@ export default function SmartSchedulePanel({ tasks }: Props) {
 
 function Metric({ label, value, icon, warning = false }: { label: string; value: number; icon: React.ReactNode; warning?: boolean }) {
   return <div className={`rounded-xl border p-3 ${warning ? "border-amber-200 bg-amber-50/70 dark:border-amber-900/50 dark:bg-amber-950/20" : "border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950/50"}`}>
-    <div className={`mb-2 flex items-center gap-2 ${warning ? "text-amber-700 dark:text-amber-300" : "text-violet-600 dark:text-violet-300"}`}>{icon}<span className="text-xs font-medium">{label}</span></div>
+    <div className={`mb-2 flex items-center gap-2 ${warning ? "text-amber-700 dark:text-amber-300" : "text-blue-600 dark:text-blue-300"}`}>{icon}<span className="text-xs font-medium">{label}</span></div>
     <div className="text-2xl font-extrabold text-slate-900 dark:text-white">{value}</div>
   </div>;
 }

@@ -110,7 +110,7 @@ export default function MyTasks() {
     <div className="mx-auto max-w-[1600px] space-y-6 px-4 py-7 sm:px-6 lg:px-10 lg:py-9">
       <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-widest text-violet-600">
+          <p className="mb-2 text-xs font-bold uppercase tracking-widest text-blue-600">
             Your workload
           </p>
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
@@ -136,7 +136,7 @@ export default function MyTasks() {
           label="Total assigned"
           value={loading ? "—" : tasks.length}
           icon={<ListTodo size={20} />}
-          iconClass="bg-violet-100 text-violet-600"
+          iconClass="bg-blue-100 text-blue-600"
         />
         <SummaryCard
           label="Remaining"
@@ -166,7 +166,7 @@ export default function MyTasks() {
               key={item.value}
               type="button"
               onClick={() => setFilter(item.value)}
-              className={`rounded-xl px-3.5 py-2 text-xs font-semibold transition ${filter === item.value ? "bg-violet-600 text-white shadow-sm" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}
+              className={`rounded-xl px-3.5 py-2 text-xs font-semibold transition ${filter === item.value ? "bg-blue-600 text-white shadow-sm" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}
             >
               {item.label}
               {item.value === "all" && !loading ? ` (${tasks.length})` : ""}
@@ -205,14 +205,14 @@ export default function MyTasks() {
 
         {!error && loading && (
           <div className="flex min-h-48 items-center justify-center gap-3 text-slate-500">
-            <LoaderCircle size={23} className="animate-spin text-violet-600" />
+            <LoaderCircle size={23} className="animate-spin text-blue-600" />
             <span className="text-sm">Loading your tasks...</span>
           </div>
         )}
 
         {!loading && !error && filteredTasks.length === 0 && (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 px-5 py-12 text-center">
-            <span className="grid size-14 place-items-center rounded-2xl bg-violet-50 text-violet-500">
+            <span className="grid size-14 place-items-center rounded-2xl bg-blue-50 text-blue-500">
               <ListTodo size={27} />
             </span>
             <h3 className="mt-4 font-bold text-slate-800">
@@ -235,7 +235,7 @@ export default function MyTasks() {
               return (
                 <article
                   key={task._id}
-                  className="rounded-xl border border-slate-200 p-4 transition hover:border-violet-200 hover:shadow-sm sm:p-5"
+                  className="rounded-xl border border-slate-200 p-4 transition hover:border-blue-200 hover:shadow-sm sm:p-5"
                 >
                   <div className="flex items-start gap-3">
                     <span className="mt-0.5 shrink-0">
@@ -259,7 +259,7 @@ export default function MyTasks() {
                             </p>
                           )}
                         </div>
-                        <span className="w-fit shrink-0 rounded-lg bg-violet-50 px-2.5 py-1 text-xs font-semibold text-violet-700">
+                        <span className="w-fit shrink-0 rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
                           {statusLabels[task.status] ?? task.status}
                         </span>
                       </div>

@@ -318,7 +318,7 @@ export default function NotificationCenter() {
         aria-expanded={open}
         aria-haspopup="dialog"
         onClick={toggleNotifications}
-        className="relative grid size-9 place-items-center rounded-lg text-slate-500 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        className="relative grid size-9 place-items-center rounded-lg text-slate-500 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
         <Bell size={18} />
 
@@ -350,7 +350,7 @@ export default function NotificationCenter() {
               type="button"
               onClick={() => void markAllRead()}
               disabled={!unreadCount || markingAll}
-              className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-semibold text-violet-700 hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-semibold text-blue-700 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {markingAll ? (
                 <LoaderCircle size={14} className="animate-spin" />
@@ -387,12 +387,12 @@ export default function NotificationCenter() {
                   <article
                     key={id || `${item.createdAt ?? "notification"}-${index}`}
                     className={`flex gap-3 border-b border-slate-50 px-4 py-3 last:border-0 ${
-                      read ? "bg-white" : "bg-violet-50/60"
+                      read ? "bg-white" : "bg-blue-50/60"
                     }`}
                   >
                     <span
                       className={`mt-1 size-2 shrink-0 rounded-full ${
-                        read ? "bg-slate-200" : "bg-violet-500"
+                        read ? "bg-slate-200" : "bg-blue-500"
                       }`}
                     />
 
@@ -413,7 +413,7 @@ export default function NotificationCenter() {
                         title="Mark as read"
                         disabled={marking}
                         onClick={() => void markRead(item)}
-                        className="self-start rounded-md p-1 text-slate-400 transition hover:bg-white hover:text-violet-700 disabled:opacity-50"
+                        className="self-start rounded-md p-1 text-slate-400 transition hover:bg-white hover:text-blue-700 disabled:opacity-50"
                       >
                         {marking ? (
                           <LoaderCircle size={15} className="animate-spin" />
@@ -447,7 +447,7 @@ export default function NotificationCenter() {
               type="button"
               onClick={() => void loadNotifications()}
               disabled={loading}
-              className="w-full rounded-lg py-1.5 text-xs font-semibold text-slate-500 transition hover:bg-white hover:text-violet-700 disabled:opacity-50"
+              className="w-full rounded-lg py-1.5 text-xs font-semibold text-slate-500 transition hover:bg-white hover:text-blue-700 disabled:opacity-50"
             >
               {loading ? "Refreshing..." : "Refresh"}
             </button>

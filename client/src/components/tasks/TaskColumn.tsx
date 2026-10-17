@@ -29,10 +29,10 @@ const statusStyles: Record<
     badge: "bg-sky-50 text-sky-700 dark:bg-sky-950/70 dark:text-sky-300",
   },
   in_review: {
-    dot: "bg-violet-500",
-    accent: "border-t-violet-500",
+    dot: "bg-blue-500",
+    accent: "border-t-blue-500",
     badge:
-      "bg-violet-50 text-violet-700 dark:bg-violet-950/70 dark:text-violet-300",
+      "bg-blue-50 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300",
   },
   done: {
     dot: "bg-emerald-500",
@@ -73,7 +73,7 @@ export default function TaskColumn({
 
   return (
     <section
-      className={`flex min-h-[460px] min-w-[270px] flex-1 flex-col overflow-hidden rounded-2xl border border-t-[3px] ${style.accent} p-3.5 transition-all duration-200 ${isOver ? "border-indigo-400 bg-indigo-50/80 shadow-lg shadow-indigo-500/10 dark:bg-indigo-950/30" : "border-slate-200/90 bg-slate-100/70 dark:border-slate-800 dark:bg-slate-900/60"}`}
+      className={`flex min-h-[460px] min-w-[270px] flex-1 flex-col overflow-hidden rounded-2xl border border-t-[3px] ${style.accent} p-3.5 transition-all duration-200 ${isOver ? "border-sky-400 bg-sky-50/80 shadow-lg shadow-sky-500/10 dark:bg-sky-950/30" : "border-slate-200/90 bg-slate-100/70 dark:border-slate-800 dark:bg-slate-900/60"}`}
       onDragOver={handleDragOver}
       onDragLeave={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node | null))
@@ -117,7 +117,7 @@ export default function TaskColumn({
         ))}
         {sortedTasks.length === 0 && (
           <div
-            className={`flex min-h-36 flex-1 flex-col items-center justify-center rounded-xl border border-dashed px-4 text-center transition ${isOver ? "border-indigo-400 bg-indigo-50/70 dark:bg-indigo-950/30" : "border-slate-300/80 bg-white/50 dark:border-slate-700 dark:bg-slate-950/30"}`}
+            className={`flex min-h-36 flex-1 flex-col items-center justify-center rounded-xl border border-dashed px-4 text-center transition ${isOver ? "border-sky-400 bg-sky-50/70 dark:bg-sky-950/30" : "border-slate-300/80 bg-white/50 dark:border-slate-700 dark:bg-slate-950/30"}`}
           >
             <span className="mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-white text-lg text-slate-400 shadow-sm dark:bg-slate-800">
               ＋

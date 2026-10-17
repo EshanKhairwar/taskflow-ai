@@ -28,7 +28,7 @@ interface ProjectsTabProps {
 }
 
 const projectColors = [
-  "bg-violet-100 text-violet-600",
+  "bg-blue-100 text-blue-600",
   "bg-sky-100 text-sky-600",
   "bg-orange-100 text-orange-600",
   "bg-emerald-100 text-emerald-600",
@@ -64,7 +64,7 @@ export default function ProjectsTab({
     <div className="mx-auto max-w-[1600px] px-4 py-7 sm:px-6 lg:px-10 lg:py-9">
       <section className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-violet-500">
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-blue-500">
             Workspace / Projects
           </p>
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
@@ -78,7 +78,7 @@ export default function ProjectsTab({
         <button
           type="button"
           onClick={onCreateProject}
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-200 transition hover:-translate-y-0.5 hover:bg-violet-700"
+          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:-translate-y-0.5 hover:bg-blue-700"
         >
           <Plus size={18} /> New project
         </button>
@@ -90,7 +90,7 @@ export default function ProjectsTab({
             <span className="text-sm font-medium text-slate-500">
               Total projects
             </span>
-            <span className="grid size-10 place-items-center rounded-xl bg-violet-100 text-violet-600">
+            <span className="grid size-10 place-items-center rounded-xl bg-blue-100 text-blue-600">
               <FolderKanban size={19} />
             </span>
           </div>
@@ -169,7 +169,7 @@ export default function ProjectsTab({
           {filteredProjects.map((project, index) => (
             <article
               key={project._id ?? project.id ?? project.name}
-              className="group flex min-h-64 flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100/50"
+              className="group flex min-h-64 flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100/50"
             >
               <div className="mb-5 flex items-start justify-between gap-3">
                 <span
@@ -190,7 +190,7 @@ export default function ProjectsTab({
               </p>
               <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
                 <span className="flex items-center gap-2 text-xs text-slate-400">
-                  <span className="grid size-7 place-items-center rounded-full bg-violet-100 text-[10px] font-bold text-violet-700">
+                  <span className="grid size-7 place-items-center rounded-full bg-blue-100 text-[10px] font-bold text-blue-700">
                     {getInitials(project.name) || "P"}
                   </span>
                   {formatDate(project.updatedAt ?? project.createdAt)}
@@ -198,7 +198,7 @@ export default function ProjectsTab({
                 <button
                   type="button"
                   onClick={() => onOpenProject(project)}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-violet-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-violet-700"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-700"
                 >
                   Open board <ArrowUpRight size={14} />
                 </button>
@@ -208,9 +208,9 @@ export default function ProjectsTab({
           <button
             type="button"
             onClick={onCreateProject}
-            className="flex min-h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-violet-200 bg-violet-50/40 p-6 text-center transition hover:border-violet-400 hover:bg-violet-50"
+            className="flex min-h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50/40 p-6 text-center transition hover:border-blue-400 hover:bg-blue-50"
           >
-            <span className="grid size-12 place-items-center rounded-2xl bg-violet-100 text-violet-600">
+            <span className="grid size-12 place-items-center rounded-2xl bg-blue-100 text-blue-600">
               <Plus size={23} />
             </span>
             <span className="mt-4 text-sm font-bold text-slate-800">
@@ -223,7 +223,7 @@ export default function ProjectsTab({
         </div>
       ) : (
         <section className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-          <span className="mx-auto grid size-16 place-items-center rounded-2xl bg-violet-100 text-violet-600">
+          <span className="mx-auto grid size-16 place-items-center rounded-2xl bg-blue-100 text-blue-600">
             <FolderKanban size={29} />
           </span>
           <h2 className="mt-5 text-lg font-bold text-slate-900">
@@ -240,7 +240,7 @@ export default function ProjectsTab({
             <button
               type="button"
               onClick={onCreateProject}
-              className="mt-5 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-700"
+              className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
             >
               <Plus size={16} /> Create project
             </button>

@@ -72,16 +72,16 @@ export default function LoginPage({
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4 py-10 text-white">
-      <div className="pointer-events-none absolute -left-32 -top-32 size-96 rounded-full bg-violet-600/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -right-32 size-96 rounded-full bg-indigo-600/20 blur-3xl" />
+      <div className="pointer-events-none absolute -left-32 -top-32 size-96 rounded-full bg-blue-600/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -right-32 size-96 rounded-full bg-sky-600/20 blur-3xl" />
 
       <section className="relative w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-5 flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-900/40">
+          <div className="mx-auto mb-5 flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-sky-600 shadow-lg shadow-blue-900/40">
             <Sparkles size={27} />
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-            TaskFlow <span className="text-violet-400">AI</span>
+            TaskFlow <span className="text-blue-400">AI</span>
           </h1>
           <p className="mt-3 text-sm leading-6 text-slate-400">
             Organize your projects. Focus on what matters.
@@ -112,7 +112,7 @@ export default function LoginPage({
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="you@example.com"
                 disabled={loading}
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 disabled:opacity-60"
+                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 disabled:opacity-60"
               />
             </div>
 
@@ -131,7 +131,7 @@ export default function LoginPage({
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="Enter your password"
                   disabled={loading}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 pr-12 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 disabled:opacity-60"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 pr-12 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 disabled:opacity-60"
                 />
                 <button
                   type="button"
@@ -156,11 +156,11 @@ export default function LoginPage({
             )}
 
             {needsVerification && (
-              <div className="rounded-xl border border-violet-500/30 bg-violet-500/10 p-4">
+              <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-4">
                 <div className="flex items-start gap-3">
-                  <MailCheck size={20} className="mt-0.5 shrink-0 text-violet-300" />
+                  <MailCheck size={20} className="mt-0.5 shrink-0 text-blue-300" />
                   <div>
-                    <p className="text-sm font-semibold text-violet-200">Email verification required</p>
+                    <p className="text-sm font-semibold text-blue-200">Email verification required</p>
                     <p className="mt-1 text-sm leading-5 text-slate-300">
                       If you have just signed in, use the button below to resend the verification link.
                     </p>
@@ -170,7 +170,7 @@ export default function LoginPage({
                   type="button"
                   onClick={handleResendVerification}
                   disabled={sendingVerification}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-violet-400/40 px-4 py-3 text-sm font-semibold text-violet-200 transition hover:bg-violet-500/10 disabled:opacity-60"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-blue-400/40 px-4 py-3 text-sm font-semibold text-blue-200 transition hover:bg-blue-500/10 disabled:opacity-60"
                 >
                   {sendingVerification ? <LoaderCircle size={17} className="animate-spin" /> : <RefreshCw size={17} />}
                   {sendingVerification ? "Sending link..." : "Resend verification link"}
@@ -181,7 +181,7 @@ export default function LoginPage({
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg transition hover:from-violet-500 hover:to-indigo-500 focus:outline-none focus:ring-4 focus:ring-violet-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg transition hover:from-blue-500 hover:to-sky-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? <LoaderCircle size={18} className="animate-spin" /> : <LogIn size={18} />}
               {loading ? "Signing in..." : "Sign in"}
@@ -192,7 +192,7 @@ export default function LoginPage({
           <button
             type="button"
             onClick={onSwitchToSignup}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-700 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:border-violet-500/50 hover:bg-violet-500/5"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-700 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:border-blue-500/50 hover:bg-blue-500/5"
           >
             <UserPlus size={17} />
             Create an account

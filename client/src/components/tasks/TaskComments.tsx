@@ -66,7 +66,7 @@ export default function TaskComments({ taskId }: { taskId: string }) {
     <section className="mt-5 border-t border-slate-200 pt-5 dark:border-slate-800">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <MessageCircle size={17} className="text-violet-500" />
+          <MessageCircle size={17} className="text-blue-500" />
           <h3 className="text-sm font-bold">Comments</h3>
           <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500 dark:bg-slate-800">
             {comments.length}
@@ -77,7 +77,7 @@ export default function TaskComments({ taskId }: { taskId: string }) {
           onClick={() => void loadComments()}
           disabled={loading}
           aria-label="Refresh comments"
-          className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-violet-600 disabled:opacity-50 dark:hover:bg-slate-800"
+          className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-blue-600 disabled:opacity-50 dark:hover:bg-slate-800"
         >
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
         </button>
@@ -129,14 +129,14 @@ export default function TaskComments({ taskId }: { taskId: string }) {
           maxLength={2000}
           rows={2}
           placeholder="Write a comment…"
-          className="w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none placeholder:text-slate-400 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10 dark:border-slate-700 dark:bg-slate-950"
+          className="w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950"
         />
         <div className="flex items-center justify-between gap-3">
           <p className="text-[10px] text-slate-400">{draft.trim().length}/2000</p>
           <button
             type="submit"
             disabled={posting || !draft.trim()}
-            className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {posting ? <LoaderCircle size={14} className="animate-spin" /> : <Send size={14} />}
             {posting ? "Posting…" : "Post comment"}

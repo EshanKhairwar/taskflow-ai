@@ -167,7 +167,7 @@ export default function TaskCalendar({
     <section className="mx-auto max-w-[1600px] px-4 py-7 sm:px-6 lg:px-10 lg:py-9">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-violet-600">
+          <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-blue-600">
             <CalendarDays size={15} /> Task planning
           </p>
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
@@ -263,14 +263,14 @@ export default function TaskCalendar({
                   aria-pressed={isSelected}
                   className={`min-h-24 border-b border-r border-slate-100 p-1.5 text-left transition sm:min-h-32 sm:p-2 ${
                     isSelected
-                      ? "bg-violet-50 ring-2 ring-inset ring-violet-400"
+                      ? "bg-blue-50 ring-2 ring-inset ring-blue-400"
                       : "hover:bg-slate-50"
                   } ${!inMonth ? "bg-slate-50/70 text-slate-300" : "text-slate-700"}`}
                 >
                   <span
                     className={`inline-flex size-7 items-center justify-center rounded-full text-xs font-semibold ${
                       isToday
-                        ? "bg-violet-600 text-white"
+                        ? "bg-blue-600 text-white"
                         : inMonth
                           ? "text-slate-700"
                           : "text-slate-300"
@@ -369,7 +369,7 @@ export default function TaskCalendar({
                         <button
                           type="button"
                           onClick={() => onOpenProject(project)}
-                          className="text-xs font-semibold text-violet-600 hover:text-violet-800"
+                          className="text-xs font-semibold text-blue-600 hover:text-blue-800"
                         >
                           Open project →
                         </button>

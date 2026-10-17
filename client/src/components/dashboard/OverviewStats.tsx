@@ -12,7 +12,7 @@ export default function OverviewStats({ projectCount, loading }: OverviewStatsPr
       value: loading ? "—" : String(projectCount),
       sub: "Projects you can access",
       icon: FolderKanban,
-      color: "bg-violet-100 text-violet-600",
+      color: "bg-blue-100 text-blue-600",
     },
     {
       title: "Open tasks",

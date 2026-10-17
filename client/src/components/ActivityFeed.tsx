@@ -70,7 +70,7 @@ export default function ActivityFeed() {
           type="button"
           aria-label="Refresh activity"
           onClick={() => void load()}
-          className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-violet-700"
+          className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-blue-700"
         >
           <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
         </button>
@@ -101,7 +101,7 @@ export default function ActivityFeed() {
               key={item._id ?? item.id ?? `${item.createdAt}-${index}`}
               className="flex gap-3 py-3 first:pt-1 last:pb-1"
             >
-              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-violet-50 text-violet-600">
+              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600">
                 <Activity size={16} />
               </span>
               <div className="min-w-0 flex-1">
@@ -121,7 +121,7 @@ export default function ActivityFeed() {
         </div>
       ) : (
         <div className="flex gap-3 border-y border-slate-100 py-4">
-          <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-violet-50 text-violet-600">
+          <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600">
             <Clock3 size={17} />
           </span>
           <div>
@@ -135,7 +135,7 @@ export default function ActivityFeed() {
         </div>
       )}
       <p className="mt-4 flex gap-2 text-[11px] leading-5 text-slate-500">
-        <Sparkles size={15} className="mt-0.5 shrink-0 text-violet-500" />
+        <Sparkles size={15} className="mt-0.5 shrink-0 text-blue-500" />
         Tip: break large tasks into smaller, actionable steps.
       </p>
     </section>

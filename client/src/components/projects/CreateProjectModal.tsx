@@ -41,7 +41,7 @@ export default function CreateProjectModal({
       >
         <div className="mb-6 flex items-start justify-between">
           <div className="flex gap-3">
-            <span className="grid size-11 place-items-center rounded-xl bg-violet-100 text-violet-600">
+            <span className="grid size-11 place-items-center rounded-xl bg-blue-100 text-blue-600">
               <FolderKanban size={20} />
             </span>
             <div>
@@ -76,7 +76,7 @@ export default function CreateProjectModal({
             value={projectName}
             onChange={(event) => onProjectNameChange(event.target.value)}
             placeholder="e.g. Website redesign"
-            className="w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+            className="w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
           />
 
           <label htmlFor="project-description" className="mb-2 mt-5 block text-xs font-semibold text-slate-700">
@@ -89,7 +89,7 @@ export default function CreateProjectModal({
             value={description}
             onChange={(event) => onDescriptionChange(event.target.value)}
             placeholder="What are you planning to accomplish?"
-            className="w-full resize-y rounded-xl border border-slate-200 px-3 py-3 text-sm leading-5 outline-none placeholder:text-slate-400 focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+            className="w-full resize-y rounded-xl border border-slate-200 px-3 py-3 text-sm leading-5 outline-none placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
           />
 
           {createError && (
@@ -109,7 +109,7 @@ export default function CreateProjectModal({
             <button
               type="submit"
               disabled={creating}
-              className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-xs font-semibold text-white shadow-md shadow-violet-200 hover:bg-violet-700 disabled:cursor-wait disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-md shadow-blue-200 hover:bg-blue-700 disabled:cursor-wait disabled:opacity-60"
             >
               {creating ? "Creating..." : <><Plus size={16} /> Create project</>}
             </button>

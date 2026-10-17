@@ -74,7 +74,7 @@ export default function TaskCard({
       onDragStart={(event) => onDragStart(event, task)}
       onDragEnd={onDragEnd}
       aria-label={`Task: ${task.title}`}
-      className={`group relative rounded-xl border border-slate-200/90 bg-white p-4 shadow-sm shadow-slate-900/[0.025] transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-lg hover:shadow-slate-900/[0.06] dark:border-slate-700/80 dark:bg-slate-900 dark:hover:border-indigo-700 ${isMoving ? "cursor-wait opacity-50" : "cursor-grab active:cursor-grabbing"}`}
+      className={`group relative rounded-xl border border-slate-200/90 bg-white p-4 shadow-sm shadow-slate-900/[0.025] transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-lg hover:shadow-slate-900/[0.06] dark:border-slate-700/80 dark:bg-slate-900 dark:hover:border-sky-700 ${isMoving ? "cursor-wait opacity-50" : "cursor-grab active:cursor-grabbing"}`}
     >
       <div className="mb-3 flex items-center justify-between gap-2">
         <span
@@ -134,7 +134,7 @@ export default function TaskCard({
             ) : (
               <span
                 aria-hidden="true"
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-violet-100 text-[10px] font-bold text-violet-700 dark:bg-violet-950 dark:text-violet-300"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-[10px] font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
               >
                 {getInitials(assignee.name)}
               </span>
@@ -167,7 +167,7 @@ export default function TaskCard({
           draggable={false}
           onClick={() => onEdit(task)}
           disabled={isMoving}
-          className="rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] font-semibold text-slate-600 transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:border-violet-800 dark:hover:bg-violet-950/50"
+          className="rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] font-semibold text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:border-blue-800 dark:hover:bg-blue-950/50"
         >
           Edit task
         </button>

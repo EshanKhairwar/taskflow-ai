@@ -317,7 +317,7 @@ export default function AnalyticsDashboard({
     <section className="mx-auto max-w-[1600px] px-4 py-7 sm:px-6 lg:px-10 lg:py-9">
       <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="mb-3 flex items-center gap-2 text-[10px] font-bold tracking-[0.16em] text-violet-600">
+          <p className="mb-3 flex items-center gap-2 text-[10px] font-bold tracking-[0.16em] text-blue-600">
             <BarChart3 size={15} /> WORKSPACE INSIGHTS
           </p>
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
@@ -356,7 +356,7 @@ export default function AnalyticsDashboard({
       ) : (
         <>
           <div className="mb-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <MetricCard label="Total tasks" value={stats.total} detail={`Across ${projects.length} accessible project${projects.length === 1 ? "" : "s"}`} icon={CircleDashed} tone="bg-violet-100 text-violet-700" />
+            <MetricCard label="Total tasks" value={stats.total} detail={`Across ${projects.length} accessible project${projects.length === 1 ? "" : "s"}`} icon={CircleDashed} tone="bg-blue-100 text-blue-700" />
             <MetricCard label="Open tasks" value={stats.open} detail="Tasks not marked as completed" icon={Activity} tone="bg-sky-100 text-sky-700" />
             <MetricCard label="Completed" value={stats.completed} detail={`${stats.completionRate}% overall completion`} icon={CheckCircle2} tone="bg-emerald-100 text-emerald-700" />
             <MetricCard label="Overdue" value={stats.overdue} detail={`${stats.dueSoon} open task${stats.dueSoon === 1 ? "" : "s"} due in the next 7 days`} icon={AlertTriangle} tone="bg-rose-100 text-rose-700" />
@@ -369,7 +369,7 @@ export default function AnalyticsDashboard({
                   <h2 className="text-base font-bold text-slate-900">Task status</h2>
                   <p className="mt-1 text-xs text-slate-500">How work is distributed across your workflow.</p>
                 </div>
-                <span className="rounded-lg bg-violet-50 px-2.5 py-1.5 text-xs font-bold text-violet-700">{stats.completionRate}% done</span>
+                <span className="rounded-lg bg-blue-50 px-2.5 py-1.5 text-xs font-bold text-blue-700">{stats.completionRate}% done</span>
               </div>
 
               <div className="mb-6 flex h-3 overflow-hidden rounded-full bg-slate-100" aria-label="Task status distribution">
@@ -440,7 +440,7 @@ export default function AnalyticsDashboard({
           <section className="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
               <div>
-                <p className="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-[0.16em] text-violet-600">
+                <p className="mb-2 flex items-center gap-2 text-[10px] font-bold tracking-[0.16em] text-blue-600">
                   <Users size={14} /> TEAM PERFORMANCE
                 </p>
                 <h2 className="text-base font-bold text-slate-900">Team productivity</h2>
@@ -486,7 +486,7 @@ export default function AnalyticsDashboard({
                       <tr key={member.userId} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/70">
                         <td className="px-3 py-3">
                           <div className="flex items-center gap-3">
-                            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-violet-100 text-xs font-bold text-violet-700">
+                            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
                               {member.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0] ?? "").join("").toUpperCase() || <UserRound size={15} />}
                             </span>
                             <span className="min-w-0">
@@ -504,7 +504,7 @@ export default function AnalyticsDashboard({
                         <td className="px-3 py-3">
                           <div className="flex items-center gap-2">
                             <div className="h-2 w-20 overflow-hidden rounded-full bg-slate-100">
-                              <div className="h-full rounded-full bg-violet-500" style={{ width: `${member.completionRate}%` }} />
+                              <div className="h-full rounded-full bg-blue-500" style={{ width: `${member.completionRate}%` }} />
                             </div>
                             <span className="text-xs font-bold tabular-nums text-slate-600">{member.completionRate}%</span>
                           </div>
@@ -538,13 +538,13 @@ export default function AnalyticsDashboard({
                   {projectSummaries.map((summary) => (
                     <div key={projectIdOf(summary.project) || summary.project.name}>
                       <div className="mb-2 flex items-center justify-between gap-3">
-                        <button type="button" onClick={() => onOpenProject(summary.project)} className="truncate text-left text-sm font-semibold text-slate-700 hover:text-violet-700">
+                        <button type="button" onClick={() => onOpenProject(summary.project)} className="truncate text-left text-sm font-semibold text-slate-700 hover:text-blue-700">
                           {summary.project.name}
                         </button>
                         <span className="shrink-0 text-xs font-semibold tabular-nums text-slate-500">{summary.percent}% · {summary.completed}/{summary.total}</span>
                       </div>
                       <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
-                        <div className="h-full rounded-full bg-violet-500 transition-all" style={{ width: `${summary.percent}%` }} />
+                        <div className="h-full rounded-full bg-blue-500 transition-all" style={{ width: `${summary.percent}%` }} />
                       </div>
                       <p className="mt-1.5 text-[11px] text-slate-400">{summary.open} open task{summary.open === 1 ? "" : "s"}</p>
                     </div>
@@ -570,7 +570,7 @@ export default function AnalyticsDashboard({
                       type="button"
                       key={`${projectIdOf(project)}-${task._id}`}
                       onClick={() => onOpenProject(project)}
-                      className="flex w-full items-start gap-3 rounded-xl border border-slate-100 p-3 text-left transition hover:border-violet-200 hover:bg-violet-50/50"
+                      className="flex w-full items-start gap-3 rounded-xl border border-slate-100 p-3 text-left transition hover:border-blue-200 hover:bg-blue-50/50"
                     >
                       <span className={`mt-0.5 size-2 shrink-0 rounded-full ${priorityMeta[task.priority].bar}`} />
                       <span className="min-w-0 flex-1">
@@ -592,9 +592,9 @@ export default function AnalyticsDashboard({
             </section>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-violet-100 bg-gradient-to-r from-violet-50 to-indigo-50 p-4 sm:p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 to-sky-50 p-4 sm:p-5">
             <div className="flex items-center gap-3">
-              <span className="grid size-10 place-items-center rounded-xl bg-white text-violet-600 shadow-sm"><Target size={19} /></span>
+              <span className="grid size-10 place-items-center rounded-xl bg-white text-blue-600 shadow-sm"><Target size={19} /></span>
               <div>
                 <p className="text-sm font-bold text-slate-800">Workspace completion</p>
                 <p className="mt-1 text-xs text-slate-500">{stats.completed} of {stats.total} tasks completed across your projects.</p>
@@ -602,9 +602,9 @@ export default function AnalyticsDashboard({
             </div>
             <div className="flex items-center gap-3">
               <div className="h-2.5 w-28 overflow-hidden rounded-full bg-white">
-                <div className="h-full rounded-full bg-violet-600" style={{ width: `${stats.completionRate}%` }} />
+                <div className="h-full rounded-full bg-blue-600" style={{ width: `${stats.completionRate}%` }} />
               </div>
-              <span className="text-lg font-extrabold text-violet-800">{stats.completionRate}%</span>
+              <span className="text-lg font-extrabold text-blue-800">{stats.completionRate}%</span>
             </div>
           </div>
         </>

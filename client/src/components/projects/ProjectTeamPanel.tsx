@@ -109,7 +109,7 @@ export default function ProjectTeamPanel({ projectId }: ProjectTeamPanelProps) {
             </span>
           </div>
         </div>
-        <span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700 dark:bg-violet-950 dark:text-violet-300">
+        <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">
           {members.length} {members.length === 1 ? "member" : "members"}
         </span>
       </div>
@@ -127,12 +127,12 @@ export default function ProjectTeamPanel({ projectId }: ProjectTeamPanelProps) {
             onChange={(event) => setEmail(event.target.value)}
             placeholder="Registered user's email"
             aria-label="Member email"
-            className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-4 focus:ring-violet-100 dark:border-slate-700 dark:bg-slate-950"
+            className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-950"
           />
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-60"
+            className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
           >
             {submitting ? "Adding…" : "Add member"}
           </button>
@@ -176,7 +176,7 @@ export default function ProjectTeamPanel({ projectId }: ProjectTeamPanelProps) {
                       className="size-10 rounded-full object-cover"
                     />
                   ) : (
-                    <span className="grid size-10 place-items-center rounded-full bg-violet-100 text-sm font-bold text-violet-700 dark:bg-violet-950 dark:text-violet-300">
+                    <span className="grid size-10 place-items-center rounded-full bg-blue-100 text-sm font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300">
                       {member.name
                         .trim()
                         .split(/\s+/)

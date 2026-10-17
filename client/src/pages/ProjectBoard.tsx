@@ -341,8 +341,8 @@ export default function ProjectBoard({
       <div className="mx-auto max-w-[1760px]">
         <div className="mb-6 flex flex-col gap-5 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/[0.025] dark:border-slate-800 dark:bg-slate-900/70 sm:p-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="mb-2 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-violet-600 dark:text-violet-400">
-              <span className="inline-block h-2 w-2 rounded-full bg-violet-500" /> TASKFLOW AI <span className="text-slate-300 dark:text-slate-700">/</span> WORKSPACE
+            <p className="mb-2 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-blue-600 dark:text-blue-400">
+              <span className="inline-block h-2 w-2 rounded-full bg-blue-500" /> TASKFLOW AI <span className="text-slate-300 dark:text-slate-700">/</span> WORKSPACE
             </p>
 
             <h1 className="text-2xl font-extrabold tracking-tight text-slate-950 dark:text-white sm:text-3xl">
@@ -368,7 +368,7 @@ export default function ProjectBoard({
               <span className={`h-2 w-2 rounded-full ${socketStatus === "connected" ? "bg-emerald-500" : socketStatus === "error" ? "bg-rose-500" : "bg-amber-500"}`} />
               {socketStatus === "connected" ? "Live connected" : socketStatus === "error" ? "Live connection error" : socketStatus === "connecting" ? "Connecting live…" : "Live disconnected"}
             </span>
-            <label className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 transition focus-within:border-violet-400 focus-within:ring-4 focus-within:ring-violet-500/10 dark:border-slate-700 dark:bg-slate-950">
+            <label className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 transition focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950">
               <span className="text-slate-400" aria-hidden="true">
                 ⌕
               </span>
@@ -394,7 +394,7 @@ export default function ProjectBoard({
             <button
               type="button"
               onClick={openCreateModal}
-              className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-violet-600/20 transition hover:-translate-y-0.5 hover:from-violet-700 hover:to-indigo-700"
+              className="rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:from-blue-700 hover:to-sky-700"
             >
               + Create task
             </button>
@@ -416,7 +416,7 @@ export default function ProjectBoard({
 
           <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-violet-500 via-indigo-500 to-sky-500 transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-r from-blue-500 via-sky-500 to-sky-500 transition-all duration-500"
               style={{ width: `${completion}%` }}
             />
           </div>
@@ -582,7 +582,7 @@ export default function ProjectBoard({
                     }))
                   }
                   placeholder="e.g. Build login page"
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:focus:ring-indigo-950"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100 dark:border-slate-700 dark:bg-slate-950 dark:focus:ring-sky-950"
                 />
               </div>
 
@@ -607,7 +607,7 @@ export default function ProjectBoard({
                     }))
                   }
                   placeholder="What needs to be done?"
-                  className="w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:focus:ring-indigo-950"
+                  className="w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100 dark:border-slate-700 dark:bg-slate-950 dark:focus:ring-sky-950"
                 />
               </div>
 
@@ -782,7 +782,7 @@ export default function ProjectBoard({
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-60"
+                  className="rounded-xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-sky-700 disabled:cursor-wait disabled:opacity-60"
                 >
                   {saving
                     ? "Saving…"

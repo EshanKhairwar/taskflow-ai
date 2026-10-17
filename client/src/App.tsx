@@ -97,7 +97,7 @@ interface NotificationItem {
 }
 
 const projectColors = [
-  "bg-violet-100 text-violet-600",
+  "bg-blue-100 text-blue-600",
 
   "bg-sky-100 text-sky-600",
 
@@ -766,7 +766,7 @@ export default function App() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-9 w-9 animate-spin rounded-full border-4 border-violet-400/30 border-t-violet-400" />
+          <div className="h-9 w-9 animate-spin rounded-full border-4 border-blue-400/30 border-t-blue-400" />
 
           <p className="text-sm text-slate-300">Restoring your session...</p>
         </div>
@@ -824,12 +824,12 @@ export default function App() {
         }`}
       >
         <div className="flex items-center gap-3 px-2">
-          <div className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-lg shadow-violet-200">
+          <div className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-blue-500 to-sky-600 text-white shadow-lg shadow-blue-200">
             <Sparkles size={19} />
           </div>
 
           <span className="text-xl font-extrabold tracking-tight text-slate-900">
-            TaskFlow <span className="text-violet-600">AI</span>
+            TaskFlow <span className="text-blue-600">AI</span>
           </span>
 
           <button
@@ -842,7 +842,7 @@ export default function App() {
         </div>
 
         <button className="mt-8 flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-left hover:bg-slate-50">
-          <span className="grid size-9 place-items-center rounded-lg bg-violet-100 font-bold text-violet-700">
+          <span className="grid size-9 place-items-center rounded-lg bg-blue-100 font-bold text-blue-700">
             T
           </span>
 
@@ -874,7 +874,7 @@ export default function App() {
               }}
               className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition ${
                 activeNav === label
-                  ? "bg-violet-50 font-semibold text-violet-700"
+                  ? "bg-blue-50 font-semibold text-blue-700"
                   : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
               }`}
             >
@@ -893,7 +893,7 @@ export default function App() {
           <button
             aria-label="Create project"
             onClick={() => setModalOpen(true)}
-            className="grid size-7 place-items-center rounded-lg text-slate-400 hover:bg-violet-50 hover:text-violet-700"
+            className="grid size-7 place-items-center rounded-lg text-slate-400 hover:bg-blue-50 hover:text-blue-700"
           >
             <Plus size={16} />
           </button>
@@ -909,7 +909,7 @@ export default function App() {
               <span
                 className={`size-2 rounded-sm ${
                   [
-                    "bg-violet-500",
+                    "bg-blue-500",
 
                     "bg-sky-500",
 
@@ -950,7 +950,7 @@ export default function App() {
 
           <div className="mt-4 border-t border-slate-100 px-2 pt-4">
             <div className="flex items-center gap-3">
-              <span className="grid size-9 place-items-center rounded-full bg-violet-100 text-xs font-bold text-violet-700">
+              <span className="grid size-9 place-items-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
                 TF
               </span>
 
@@ -1044,7 +1044,7 @@ export default function App() {
                         type="button"
                         onClick={() => void handleMarkAllRead()}
                         disabled={unreadCount === 0 || markingAllRead}
-                        className="text-xs font-semibold text-violet-600 hover:text-violet-800 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="text-xs font-semibold text-blue-600 hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {markingAllRead ? "Updating..." : "Mark all read"}
                       </button>
@@ -1095,11 +1095,11 @@ export default function App() {
                                   notification._id,
                                 );
                             }}
-                            className={`block w-full border-b border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 ${!notification.readAt ? "bg-violet-50/60" : ""}`}
+                            className={`block w-full border-b border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 ${!notification.readAt ? "bg-blue-50/60" : ""}`}
                           >
                             <span className="flex items-start gap-3">
                               <span
-                                className={`mt-1 size-2 shrink-0 rounded-full ${notification.readAt ? "bg-slate-200" : "bg-violet-500"}`}
+                                className={`mt-1 size-2 shrink-0 rounded-full ${notification.readAt ? "bg-slate-200" : "bg-blue-500"}`}
                               />
                               <span className="min-w-0 flex-1">
                                 <span className="block text-xs font-semibold leading-5">
@@ -1128,7 +1128,7 @@ export default function App() {
                           void loadNotifications();
                           void loadUnreadCount();
                         }}
-                        className="text-xs font-semibold text-violet-600 hover:text-violet-800"
+                        className="text-xs font-semibold text-blue-600 hover:text-blue-800"
                       >
                         Refresh notifications
                       </button>
@@ -1145,9 +1145,9 @@ export default function App() {
                 aria-haspopup="menu"
                 aria-expanded={accountMenuOpen}
                 onClick={() => setAccountMenuOpen((open) => !open)}
-                className="flex items-center gap-2 rounded-full p-1 pr-2 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                className="flex items-center gap-2 rounded-full p-1 pr-2 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-violet-100 text-xs font-bold text-violet-700">
+                <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-blue-100 text-xs font-bold text-blue-700">
                   {avatarUrl ? (
                     <img
                       src={avatarUrl}
@@ -1184,7 +1184,7 @@ export default function App() {
                         setActiveNav("Account");
                         setAccountMenuOpen(false);
                       }}
-                      className="mt-3 w-full rounded-lg px-2 py-2 text-left text-xs font-semibold text-violet-700 hover:bg-violet-50"
+                      className="mt-3 w-full rounded-lg px-2 py-2 text-left text-xs font-semibold text-blue-700 hover:bg-blue-50"
                     >
                       View account
                     </button>
@@ -1270,7 +1270,7 @@ export default function App() {
           <TeamTab projects={projects} />
         ) : activeNav === "Settings" ? (
           <div className="mx-auto max-w-3xl px-4 py-7 sm:px-6 lg:px-10 lg:py-9">
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-violet-500">
+            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-blue-500">
               Preferences
             </p>
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
@@ -1307,7 +1307,7 @@ export default function App() {
           </div>
         ) : activeNav === "Account" ? (
           <div className="mx-auto max-w-4xl px-4 py-7 sm:px-6 lg:px-10 lg:py-9">
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-violet-500">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-blue-500">
               Personal profile
             </p>
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
@@ -1371,7 +1371,7 @@ export default function App() {
               className="mt-7 grid gap-6 lg:grid-cols-[1.4fr_1fr]"
             >
               <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-                <div className="bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 px-6 py-7 sm:px-8">
+                <div className="bg-gradient-to-r from-blue-600 via-sky-600 to-blue-600 px-6 py-7 sm:px-8">
                   <p className="text-sm font-medium text-white/75">
                     TaskFlow AI account
                   </p>
@@ -1384,7 +1384,7 @@ export default function App() {
                 </div>
                 <div className="space-y-6 p-6 sm:p-8">
                   <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-                    <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-full border-4 border-violet-100 bg-violet-100 text-3xl font-extrabold text-violet-700 shadow-sm">
+                    <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-full border-4 border-blue-100 bg-blue-100 text-3xl font-extrabold text-blue-700 shadow-sm">
                       {avatarDataUrlDraft || (!avatarRemoved && avatarUrl) ? (
                         <img
                           src={avatarDataUrlDraft || avatarUrl}
@@ -1394,7 +1394,7 @@ export default function App() {
                       ) : (
                         userInitials
                       )}
-                      <span className="pointer-events-none absolute bottom-0 right-0 grid size-8 place-items-center rounded-full border-2 border-white bg-violet-600 text-white">
+                      <span className="pointer-events-none absolute bottom-0 right-0 grid size-8 place-items-center rounded-full border-2 border-white bg-blue-600 text-white">
                         <Camera size={15} />
                       </span>
                     </div>
@@ -1406,7 +1406,7 @@ export default function App() {
                         JPG, PNG, or WEBP. Maximum size 2 MB.
                       </p>
                       <div className="mt-3 flex flex-wrap gap-2">
-                        <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700">
+                        <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
                           <Upload size={16} /> Choose photo
                           <input
                             type="file"
@@ -1450,7 +1450,7 @@ export default function App() {
                       maxLength={80}
                       required
                       autoComplete="name"
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                       placeholder="Enter your name"
                     />
                     <label
@@ -1473,7 +1473,7 @@ export default function App() {
                     <button
                       type="submit"
                       disabled={savingProfile}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       <Save size={16} />
                       {savingProfile ? "Saving…" : "Save changes"}
@@ -1549,7 +1549,7 @@ export default function App() {
                 </section>
                 <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                   <div className="flex items-center gap-3">
-                    <span className="grid size-10 place-items-center rounded-xl bg-violet-50 text-violet-600">
+                    <span className="grid size-10 place-items-center rounded-xl bg-blue-50 text-blue-600">
                       <Pencil size={18} />
                     </span>
                     <div>
@@ -1567,7 +1567,7 @@ export default function App() {
           </div>
         ) : activeNav === "Help & support" ? (
           <div className="mx-auto max-w-3xl px-4 py-7 sm:px-6 lg:px-10 lg:py-9">
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-violet-500">
+            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-blue-500">
               Support
             </p>
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
@@ -1575,7 +1575,7 @@ export default function App() {
             </h1>
             <section className="mt-6 space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex gap-3">
-                <CircleHelp className="mt-0.5 text-violet-500" />
+                <CircleHelp className="mt-0.5 text-blue-500" />
                 <div>
                   <h2 className="font-bold text-slate-900">Getting started</h2>
                   <p className="mt-1 text-sm leading-6 text-slate-500">
@@ -1585,7 +1585,7 @@ export default function App() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <FolderKanban className="mt-0.5 text-violet-500" />
+                <FolderKanban className="mt-0.5 text-blue-500" />
                 <div>
                   <h2 className="font-bold text-slate-900">Projects</h2>
                   <p className="mt-1 text-sm leading-6 text-slate-500">
@@ -1594,7 +1594,7 @@ export default function App() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <Users className="mt-0.5 text-violet-500" />
+                <Users className="mt-0.5 text-blue-500" />
                 <div>
                   <h2 className="font-bold text-slate-900">Team</h2>
                   <p className="mt-1 text-sm leading-6 text-slate-500">
@@ -1611,13 +1611,13 @@ export default function App() {
 
             <section className="mb-7 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
               <div>
-                <p className="mb-3 flex items-center gap-2 text-[10px] font-bold tracking-[0.16em] text-violet-500">
-                  <span className="size-1.5 rounded-full bg-violet-500 ring-4 ring-violet-100" />
+                <p className="mb-3 flex items-center gap-2 text-[10px] font-bold tracking-[0.16em] text-blue-500">
+                  <span className="size-1.5 rounded-full bg-blue-500 ring-4 ring-blue-100" />
                   YOUR WORKSPACE AT A GLANCE
                 </p>
 
                 <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-                  Good morning <span className="text-violet-500">✦</span>
+                  Good morning <span className="text-blue-500">✦</span>
                 </h1>
 
                 <p className="mt-2 text-sm text-slate-500">
@@ -1627,7 +1627,7 @@ export default function App() {
 
               <button
                 onClick={() => setModalOpen(true)}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-200 transition hover:-translate-y-0.5 hover:bg-violet-700"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:-translate-y-0.5 hover:bg-blue-700"
               >
                 <Plus size={18} />
                 New project
@@ -1647,7 +1647,7 @@ export default function App() {
 
                   icon: FolderKanban,
 
-                  color: "bg-violet-100 text-violet-600",
+                  color: "bg-blue-100 text-blue-600",
                 },
 
                 {
@@ -1732,7 +1732,7 @@ export default function App() {
 
                   <button
                     onClick={() => setActiveNav("Projects")}
-                    className="inline-flex items-center gap-1 whitespace-nowrap text-xs font-semibold text-violet-600 hover:text-violet-800"
+                    className="inline-flex items-center gap-1 whitespace-nowrap text-xs font-semibold text-blue-600 hover:text-blue-800"
                   >
                     View all <ArrowUpRight size={14} />
                   </button>
@@ -1781,7 +1781,7 @@ export default function App() {
                     {filteredProjects.map((project, index) => (
                       <article
                         key={project._id ?? project.id ?? project.name}
-                        className="group rounded-xl border border-slate-200 p-4 transition hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-md hover:shadow-violet-100/60"
+                        className="group rounded-xl border border-slate-200 p-4 transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md hover:shadow-blue-100/60"
                       >
                         <div className="mb-4 flex items-center justify-between">
                           <span
@@ -1805,7 +1805,7 @@ export default function App() {
                         </p>
 
                         <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-                          <span className="grid size-7 place-items-center rounded-full bg-violet-100 text-[9px] font-bold text-violet-700">
+                          <span className="grid size-7 place-items-center rounded-full bg-blue-100 text-[9px] font-bold text-blue-700">
                             {getInitials(project.name) || "P"}
                           </span>
 
@@ -1830,7 +1830,7 @@ export default function App() {
 
                             setActiveNav(project.name);
                           }}
-                          className="mt-3 flex w-full items-center justify-between rounded-lg border border-violet-200 bg-violet-50 px-3 py-2.5 text-xs font-bold text-violet-700 transition hover:border-violet-400 hover:bg-violet-100 hover:text-violet-900"
+                          className="mt-3 flex w-full items-center justify-between rounded-lg border border-blue-200 bg-blue-50 px-3 py-2.5 text-xs font-bold text-blue-700 transition hover:border-blue-400 hover:bg-blue-100 hover:text-blue-900"
                         >
                           <span>Open Kanban board</span>
 
@@ -1841,9 +1841,9 @@ export default function App() {
 
                     <button
                       onClick={() => setModalOpen(true)}
-                      className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-violet-200 bg-violet-50/40 p-5 text-center transition hover:border-violet-400 hover:bg-violet-50"
+                      className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-blue-200 bg-blue-50/40 p-5 text-center transition hover:border-blue-400 hover:bg-blue-50"
                     >
-                      <span className="grid size-10 place-items-center rounded-xl bg-violet-100 text-violet-600">
+                      <span className="grid size-10 place-items-center rounded-xl bg-blue-100 text-blue-600">
                         <Plus size={20} />
                       </span>
 
@@ -1858,7 +1858,7 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center px-5 py-10 text-center">
-                    <span className="mb-4 grid size-14 place-items-center rounded-2xl bg-violet-100 text-violet-600">
+                    <span className="mb-4 grid size-14 place-items-center rounded-2xl bg-blue-100 text-blue-600">
                       <FolderKanban size={26} />
                     </span>
 
@@ -1877,7 +1877,7 @@ export default function App() {
                     {!search && (
                       <button
                         onClick={() => setModalOpen(true)}
-                        className="mt-5 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-violet-700"
+                        className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-blue-700"
                       >
                         <Plus size={16} /> Create your first project
                       </button>
@@ -1887,15 +1887,15 @@ export default function App() {
               </div>
 
               <aside className="space-y-5">
-                <section className="relative isolate overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-950 via-violet-900 to-violet-600 p-6 text-white shadow-lg shadow-violet-200/50">
-                  <div className="absolute -right-12 -top-12 -z-10 size-48 rounded-full bg-violet-300/20 blur-2xl" />
+                <section className="relative isolate overflow-hidden rounded-2xl bg-gradient-to-br from-sky-950 via-blue-900 to-blue-600 p-6 text-white shadow-lg shadow-blue-200/50">
+                  <div className="absolute -right-12 -top-12 -z-10 size-48 rounded-full bg-blue-300/20 blur-2xl" />
 
                   <div className="mb-5 flex items-center justify-between">
-                    <span className="grid size-10 place-items-center rounded-xl border border-white/20 bg-white/10 text-violet-100">
+                    <span className="grid size-10 place-items-center rounded-xl border border-white/20 bg-white/10 text-blue-100">
                       <Sparkles size={20} />
                     </span>
 
-                    <span className="rounded-md border border-white/20 px-2 py-1 text-[9px] font-semibold tracking-widest text-violet-100">
+                    <span className="rounded-md border border-white/20 px-2 py-1 text-[9px] font-semibold tracking-widest text-blue-100">
                       TASKFLOW AI
                     </span>
                   </div>
@@ -1906,7 +1906,7 @@ export default function App() {
                     your best work.
                   </h2>
 
-                  <p className="mt-3 text-xs leading-5 text-violet-100/80">
+                  <p className="mt-3 text-xs leading-5 text-blue-100/80">
                     Turn big goals into clear next steps. Open a project to
                     generate task drafts and suggested subtasks with AI.
                   </p>
@@ -1925,7 +1925,7 @@ export default function App() {
                         setModalOpen(true);
                       }
                     }}
-                    className="mt-5 inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2.5 text-xs font-bold text-violet-800 transition hover:bg-violet-50 focus:outline-none focus:ring-2 focus:ring-white/80"
+                    className="mt-5 inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2.5 text-xs font-bold text-blue-800 transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white/80"
                   >
                     {projects.length > 0
                       ? "Open AI planner"
@@ -1949,7 +1949,7 @@ export default function App() {
                       aria-label="Refresh recent activity"
                       onClick={() => void loadActivities()}
                       disabled={activityLoading}
-                      className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-violet-600 disabled:opacity-50"
+                      className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-blue-600 disabled:opacity-50"
                     >
                       <Activity
                         size={18}
@@ -1977,7 +1977,7 @@ export default function App() {
                     </div>
                   ) : activities.length === 0 ? (
                     <div className="flex flex-col items-center px-3 py-7 text-center">
-                      <span className="mb-3 grid size-11 place-items-center rounded-xl bg-violet-50 text-violet-600">
+                      <span className="mb-3 grid size-11 place-items-center rounded-xl bg-blue-50 text-blue-600">
                         <Clock3 size={20} />
                       </span>
                       <p className="text-xs font-semibold text-slate-700">
@@ -1995,7 +1995,7 @@ export default function App() {
                           key={item._id}
                           className="flex gap-3 py-3 first:pt-0 last:pb-0"
                         >
-                          <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-violet-50 text-violet-600">
+                          <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600">
                             {item.type === "comment.added" ? (
                               <MessageSquare size={17} />
                             ) : item.type.startsWith("task.") ? (
@@ -2017,7 +2017,7 @@ export default function App() {
                                 : ""}
                             </p>
                             {item.task?.title && (
-                              <p className="mt-1 truncate text-[11px] text-violet-600">
+                              <p className="mt-1 truncate text-[11px] text-blue-600">
                                 Task: {item.task.title}
                               </p>
                             )}
@@ -2033,7 +2033,7 @@ export default function App() {
                   <p className="mt-3 flex gap-2 border-t border-slate-100 pt-3 text-[10px] leading-4 text-slate-500">
                     <Sparkles
                       size={15}
-                      className="mt-0.5 shrink-0 text-violet-500"
+                      className="mt-0.5 shrink-0 text-blue-500"
                     />
                     Tip: break large tasks into smaller, actionable steps.
                   </p>
@@ -2046,7 +2046,7 @@ export default function App() {
 
               <span>
                 Built for focused work{" "}
-                <span className="text-violet-500">✦</span>
+                <span className="text-blue-500">✦</span>
               </span>
             </footer>
           </div>
@@ -2070,7 +2070,7 @@ export default function App() {
           >
             <div className="mb-6 flex items-start justify-between">
               <div className="flex gap-3">
-                <span className="grid size-11 place-items-center rounded-xl bg-violet-100 text-violet-600">
+                <span className="grid size-11 place-items-center rounded-xl bg-blue-100 text-blue-600">
                   <FolderKanban size={20} />
                 </span>
 
@@ -2114,7 +2114,7 @@ export default function App() {
                 value={projectName}
                 onChange={(event) => setProjectName(event.target.value)}
                 placeholder="e.g. Website redesign"
-                className="w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+                className="w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
               />
 
               <label
@@ -2132,7 +2132,7 @@ export default function App() {
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 placeholder="What are you planning to accomplish?"
-                className="w-full resize-y rounded-xl border border-slate-200 px-3 py-3 text-sm leading-5 outline-none placeholder:text-slate-400 focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+                className="w-full resize-y rounded-xl border border-slate-200 px-3 py-3 text-sm leading-5 outline-none placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
               />
 
               {createError && (
@@ -2156,7 +2156,7 @@ export default function App() {
                 <button
                   type="submit"
                   disabled={creating}
-                  className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-xs font-semibold text-white shadow-md shadow-violet-200 hover:bg-violet-700 disabled:cursor-wait disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-md shadow-blue-200 hover:bg-blue-700 disabled:cursor-wait disabled:opacity-60"
                 >
                   {creating ? (
                     "Creating..."

@@ -41,16 +41,16 @@ export default function SignupPage({ onSignup: _onSignup, onSwitchToLogin }: Sig
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4 py-10 text-slate-100">
-      <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-violet-600/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
+      <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-blue-600/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-sky-500/20 blur-3xl" />
 
       <section className="relative w-full max-w-md rounded-3xl border border-white/10 bg-slate-900/90 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-9">
         <div className="mb-8 flex items-center gap-3">
-          <div className="grid size-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-950/40">
+          <div className="grid size-11 place-items-center rounded-2xl bg-gradient-to-br from-blue-500 to-sky-600 shadow-lg shadow-blue-950/40">
             <Sparkles size={22} />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold tracking-tight">TaskFlow <span className="text-violet-400">AI</span></h1>
+            <h1 className="text-xl font-extrabold tracking-tight">TaskFlow <span className="text-blue-400">AI</span></h1>
             <p className="text-xs text-slate-400">Plan smarter. Work better.</p>
           </div>
         </div>
@@ -65,8 +65,8 @@ export default function SignupPage({ onSignup: _onSignup, onSwitchToLogin }: Sig
               We sent a verification link to <strong className="break-all text-white">{email.trim().toLowerCase()}</strong>.
               Open the email and click the link to verify your address. Check your spam folder too.
             </p>
-            <div className="mt-5 flex gap-3 rounded-xl border border-violet-500/20 bg-violet-500/10 p-4">
-              <ShieldCheck size={20} className="mt-0.5 shrink-0 text-violet-300" />
+            <div className="mt-5 flex gap-3 rounded-xl border border-blue-500/20 bg-blue-500/10 p-4">
+              <ShieldCheck size={20} className="mt-0.5 shrink-0 text-blue-300" />
               <p className="text-sm leading-5 text-slate-300">
                 After verifying, return here and sign in with your email and password.
               </p>
@@ -74,7 +74,7 @@ export default function SignupPage({ onSignup: _onSignup, onSwitchToLogin }: Sig
             <button
               type="button"
               onClick={onSwitchToLogin}
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3.5 text-sm font-bold text-white transition hover:from-violet-500 hover:to-indigo-500"
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 px-4 py-3.5 text-sm font-bold text-white transition hover:from-blue-500 hover:to-sky-500"
             >
               Go to sign in <ArrowRight size={17} />
             </button>
@@ -82,7 +82,7 @@ export default function SignupPage({ onSignup: _onSignup, onSwitchToLogin }: Sig
         ) : (
           <>
             <div className="mb-7">
-              <p className="mb-2 text-sm font-semibold text-violet-400">GET STARTED</p>
+              <p className="mb-2 text-sm font-semibold text-blue-400">GET STARTED</p>
               <h2 className="text-3xl font-bold tracking-tight">Create your account</h2>
               <p className="mt-2 text-sm leading-6 text-slate-400">
                 Create your workspace account. We’ll email you a verification link.
@@ -95,7 +95,7 @@ export default function SignupPage({ onSignup: _onSignup, onSwitchToLogin }: Sig
                 <input id="signup-name" autoComplete="name" required minLength={2} maxLength={80} value={name}
                   onChange={(event) => setName(event.target.value)} placeholder="Enter your name"
                   disabled={loading}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm outline-none transition placeholder:text-slate-600 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 disabled:opacity-60" />
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60" />
               </div>
 
               <div>
@@ -103,7 +103,7 @@ export default function SignupPage({ onSignup: _onSignup, onSwitchToLogin }: Sig
                 <input id="signup-email" type="email" autoComplete="email" required maxLength={254} value={email}
                   onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com"
                   disabled={loading}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm outline-none transition placeholder:text-slate-600 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 disabled:opacity-60" />
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60" />
               </div>
 
               <div>
@@ -111,14 +111,14 @@ export default function SignupPage({ onSignup: _onSignup, onSwitchToLogin }: Sig
                 <input id="signup-password" type="password" autoComplete="new-password" required minLength={8} maxLength={72}
                   value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 8 characters"
                   disabled={loading}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm outline-none transition placeholder:text-slate-600 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 disabled:opacity-60" />
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60" />
                 <p className="mt-2 text-xs text-slate-500">Use at least 8 characters.</p>
               </div>
 
               {error && <p role="alert" className="rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">{error}</p>}
 
               <button type="submit" disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-violet-950/30 transition hover:from-violet-500 hover:to-indigo-500 disabled:cursor-not-allowed disabled:opacity-60">
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-950/30 transition hover:from-blue-500 hover:to-sky-500 disabled:cursor-not-allowed disabled:opacity-60">
                 {loading ? <><LoaderCircle size={17} className="animate-spin" /> Creating account...</> : <>Create account <ArrowRight size={17} /></>}
               </button>
             </form>
@@ -128,7 +128,7 @@ export default function SignupPage({ onSignup: _onSignup, onSwitchToLogin }: Sig
         <div className="mt-6 border-t border-slate-800 pt-5 text-center">
           <p className="text-sm text-slate-400">
             Already have an account?{" "}
-            <button type="button" onClick={onSwitchToLogin} className="font-semibold text-violet-300 transition hover:text-violet-200">
+            <button type="button" onClick={onSwitchToLogin} className="font-semibold text-blue-300 transition hover:text-blue-200">
               Sign in
             </button>
           </p>

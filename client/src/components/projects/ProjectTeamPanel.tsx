@@ -5,6 +5,7 @@ import {
   removeProjectMember,
   type ProjectMember,
 } from "../../api/projectMembers.api";
+import { useProjectSocket } from "../../hooks/useProjectSocket";
 
 interface ProjectTeamPanelProps {
   projectId: string;
@@ -19,23 +20,24 @@ export default function ProjectTeamPanel({ projectId }: ProjectTeamPanelProps) {
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const { status: socketStatus, onlineUserIds } = useProjectSocket(projectId);
 
   const refresh = useCallback(async () => {
     setLoading(true);
-  setError("");
+    setError("");
 
-  try {
-    const result = await getProjectMembers(projectId);
-    setMembers(result.members);
-    setCanManageMembers(result.canManageMembers);
-  } catch (err) {
-    setError(
-      err instanceof Error ? err.message : "Could not load project members."
-    );
-  } finally {
-    setLoading(false);
-  }
-}, [projectId]);
+    try {
+      const result = await getProjectMembers(projectId);
+      setMembers(result.members);
+      setCanManageMembers(result.canManageMembers);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Could not load project members."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [projectId]);
 
   useEffect(() => {
     void refresh();
@@ -87,6 +89,9 @@ export default function ProjectTeamPanel({ projectId }: ProjectTeamPanelProps) {
     }
   }
 
+  const connected = socketStatus === "connected";
+  const onlineCount = members.filter((member) => onlineUserIds.includes(member.id)).length;
+
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -97,6 +102,12 @@ export default function ProjectTeamPanel({ projectId }: ProjectTeamPanelProps) {
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Add registered users by email and manage project access.
           </p>
+          <div className="mt-2 flex items-center gap-2 text-xs">
+            <span className={`inline-block size-2 rounded-full ${connected ? "bg-emerald-500" : "bg-slate-400"}`} />
+            <span className="text-slate-500 dark:text-slate-400">
+              {connected ? `${onlineCount} of ${members.length} members online` : "Presence reconnecting…"}
+            </span>
+          </div>
         </div>
         <span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700 dark:bg-violet-950 dark:text-violet-300">
           {members.length} {members.length === 1 ? "member" : "members"}
@@ -153,51 +164,63 @@ export default function ProjectTeamPanel({ projectId }: ProjectTeamPanelProps) {
         </p>
       ) : (
         <ul className="mt-5 divide-y divide-slate-100 dark:divide-slate-800">
-          {members.map((member) => (
-            <li key={member.id} className="flex items-center gap-3 py-3">
-              {member.avatar ? (
-                <img
-                  src={member.avatar}
-                  alt=""
-                  className="size-10 rounded-full object-cover"
-                />
-              ) : (
-                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-violet-100 text-sm font-bold text-violet-700 dark:bg-violet-950 dark:text-violet-300">
-                  {member.name
-                    .trim()
-                    .split(/\s+/)
-                    .slice(0, 2)
-                    .map((part) => part[0]?.toUpperCase() ?? "")
-                    .join("")}
+          {members.map((member) => {
+            const isOnline = onlineUserIds.includes(member.id);
+            return (
+              <li key={member.id} className="flex items-center gap-3 py-3">
+                <div className="relative shrink-0">
+                  {member.avatar ? (
+                    <img
+                      src={member.avatar}
+                      alt=""
+                      className="size-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="grid size-10 place-items-center rounded-full bg-violet-100 text-sm font-bold text-violet-700 dark:bg-violet-950 dark:text-violet-300">
+                      {member.name
+                        .trim()
+                        .split(/\s+/)
+                        .slice(0, 2)
+                        .map((part) => part[0]?.toUpperCase() ?? "")
+                        .join("")}
+                    </span>
+                  )}
+                  <span
+                    title={isOnline ? "Online in this project" : "Offline"}
+                    className={`absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-white dark:border-slate-900 ${isOnline ? "bg-emerald-500" : "bg-slate-400"}`}
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
+                    {member.name}
+                    {member.isOwner ? " · Owner" : ""}
+                  </p>
+                  <p className="truncate text-xs text-slate-500 dark:text-slate-400">
+                    {member.email}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    {member.assignedTaskCount ?? 0} {(member.assignedTaskCount ?? 0) === 1 ? "task" : "tasks"} assigned
+                    <span className={isOnline ? "font-semibold text-emerald-600 dark:text-emerald-400" : ""}>
+                      {" · "}{isOnline ? "Online" : "Offline"}
+                    </span>
+                  </p>
+                </div>
+                <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium capitalize text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                  {member.role}
                 </span>
-              )}
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
-                  {member.name}
-                  {member.isOwner ? " · Owner" : ""}
-                </p>
-                <p className="truncate text-xs text-slate-500 dark:text-slate-400">
-                  {member.email}
-                </p>
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                  {member.assignedTaskCount ?? 0} {(member.assignedTaskCount ?? 0) === 1 ? "task" : "tasks"} assigned
-                </p>
-              </div>
-              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium capitalize text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                {member.role}
-              </span>
-              {canManageMembers && !member.isOwner && (
-                <button
-                  type="button"
-                  onClick={() => void handleRemove(member)}
-                  disabled={removingId === member.id}
-                  className="rounded-lg px-2 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 disabled:opacity-50 dark:hover:bg-rose-950/40"
-                >
-                  {removingId === member.id ? "Removing…" : "Remove"}
-                </button>
-              )}
-            </li>
-          ))}
+                {canManageMembers && !member.isOwner && (
+                  <button
+                    type="button"
+                    onClick={() => void handleRemove(member)}
+                    disabled={removingId === member.id}
+                    className="rounded-lg px-2 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 disabled:opacity-50 dark:hover:bg-rose-950/40"
+                  >
+                    {removingId === member.id ? "Removing…" : "Remove"}
+                  </button>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
       {!canManageMembers && !loading && (

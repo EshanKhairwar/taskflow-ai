@@ -6,6 +6,10 @@ import Project from "./models/Project.js";
 
 let io: Server | null = null;
 
+// Presence is tracked per user and project, with a set of socket IDs so
+// multiple tabs/devices don't mark a user offline when just one disconnects.
+const projectPresence = new Map<string, Map<string, Set<string>>>();
+
 function getAllowedOrigin(): string {
   return (process.env.CLIENT_URL || "http://localhost:5173")
     .trim()
@@ -43,6 +47,49 @@ function validProjectId(value: unknown): value is string {
   return typeof value === "string" && mongoose.isValidObjectId(value);
 }
 
+function onlineUserIds(projectId: string): string[] {
+  return [...(projectPresence.get(projectId)?.keys() ?? [])];
+}
+
+function broadcastPresence(projectId: string): void {
+  if (!io) return;
+  io.to(`project:${projectId}`).emit("project:presence", {
+    projectId,
+    onlineUserIds: onlineUserIds(projectId),
+  });
+}
+
+function addProjectPresence(projectId: string, userId: string, socketId: string): void {
+  let users = projectPresence.get(projectId);
+  if (!users) {
+    users = new Map<string, Set<string>>();
+    projectPresence.set(projectId, users);
+  }
+
+  let sockets = users.get(userId);
+  const userWasOffline = !sockets || sockets.size === 0;
+  if (!sockets) {
+    sockets = new Set<string>();
+    users.set(userId, sockets);
+  }
+
+  sockets.add(socketId);
+  if (userWasOffline) broadcastPresence(projectId);
+}
+
+function removeProjectPresence(projectId: string, userId: string, socketId: string): void {
+  const users = projectPresence.get(projectId);
+  const sockets = users?.get(userId);
+  if (!users || !sockets) return;
+
+  sockets.delete(socketId);
+  if (sockets.size === 0) {
+    users.delete(userId);
+    if (users.size === 0) projectPresence.delete(projectId);
+    broadcastPresence(projectId);
+  }
+}
+
 /** Initialize Socket.IO once on the same HTTP server as Express. */
 export function initSocketServer(httpServer: HttpServer): Server {
   if (io) return io;
@@ -68,6 +115,8 @@ export function initSocketServer(httpServer: HttpServer): Server {
 
   io.on("connection", (socket) => {
     const userId = socket.data.userId as string;
+    const joinedProjects = new Set<string>();
+    socket.data.joinedProjects = joinedProjects;
     socket.join(`user:${userId}`);
     console.log(`[Socket] Connected: ${userId}`);
 
@@ -95,7 +144,19 @@ export function initSocketServer(httpServer: HttpServer): Server {
             return;
           }
 
-          await socket.join(`project:${projectId}`);
+          // Joining the same project more than once on one socket is idempotent.
+          if (!joinedProjects.has(projectId)) {
+            await socket.join(`project:${projectId}`);
+            joinedProjects.add(projectId);
+            addProjectPresence(projectId, userId, socket.id);
+          } else {
+            // Re-send the snapshot so a reconnecting UI can recover its state.
+            socket.emit("project:presence", {
+              projectId,
+              onlineUserIds: onlineUserIds(projectId),
+            });
+          }
+
           acknowledge?.({ ok: true });
           socket.emit("project:joined", { projectId });
         } catch (error) {
@@ -109,13 +170,18 @@ export function initSocketServer(httpServer: HttpServer): Server {
       "project:leave",
       (payload: { projectId?: unknown } | undefined) => {
         const projectId = payload?.projectId;
-        if (validProjectId(projectId)) {
-          void socket.leave(`project:${projectId}`);
-        }
+        if (!validProjectId(projectId) || !joinedProjects.has(projectId)) return;
+        joinedProjects.delete(projectId);
+        void socket.leave(`project:${projectId}`);
+        removeProjectPresence(projectId, userId, socket.id);
       },
     );
 
     socket.on("disconnect", (reason) => {
+      for (const projectId of joinedProjects) {
+        removeProjectPresence(projectId, userId, socket.id);
+      }
+      joinedProjects.clear();
       console.log(`[Socket] Disconnected: ${userId}. Reason: ${reason}`);
     });
   });

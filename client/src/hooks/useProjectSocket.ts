@@ -9,6 +9,11 @@ type ProjectTaskChanged = {
   action?: "created" | "updated" | "moved" | "deleted";
 };
 
+type ProjectPresence = {
+  projectId?: string;
+  onlineUserIds?: string[];
+};
+
 const configuredApiUrl = import.meta.env.VITE_API_URL as string | undefined;
 const apiUrl = (configuredApiUrl || "http://localhost:5000/api/v1").replace(/\/+$/, "");
 const socketUrl = (import.meta.env.VITE_SOCKET_URL as string | undefined || apiUrl.replace(/\/api\/v1\/?$/, "")).replace(/\/+$/, "");
@@ -18,10 +23,12 @@ export function useProjectSocket(
   onProjectChange?: (event?: ProjectTaskChanged) => void | Promise<void>,
 ) {
   const [status, setStatus] = useState<ConnectionStatus>("connecting");
+  const [onlineUserIds, setOnlineUserIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!projectId) {
       setStatus("disconnected");
+      setOnlineUserIds([]);
       return;
     }
 
@@ -45,6 +52,7 @@ export function useProjectSocket(
           if (!active) return;
           joined = Boolean(result?.ok);
           if (!result?.ok) {
+            setOnlineUserIds([]);
             console.warn("[Socket] Could not join project room:", result?.message);
           }
         },
@@ -57,7 +65,10 @@ export function useProjectSocket(
     };
     const onDisconnect = () => {
       joined = false;
-      if (active) setStatus("disconnected");
+      if (active) {
+        setStatus("disconnected");
+        setOnlineUserIds([]);
+      }
     };
     const onConnectError = (error: Error) => {
       if (active) setStatus("error");
@@ -67,11 +78,16 @@ export function useProjectSocket(
       if (!active || !joined || event?.projectId !== projectId) return;
       void onProjectChange?.(event);
     };
+    const handlePresence = (event: ProjectPresence) => {
+      if (!active || event?.projectId !== projectId || !Array.isArray(event.onlineUserIds)) return;
+      setOnlineUserIds(event.onlineUserIds.filter((id): id is string => typeof id === "string"));
+    };
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("connect_error", onConnectError);
     socket.on("project:task-changed", handleProjectChanged);
+    socket.on("project:presence", handlePresence);
 
     return () => {
       active = false;
@@ -80,9 +96,10 @@ export function useProjectSocket(
       socket.off("disconnect", onDisconnect);
       socket.off("connect_error", onConnectError);
       socket.off("project:task-changed", handleProjectChanged);
+      socket.off("project:presence", handlePresence);
       socket.disconnect();
     };
   }, [projectId, onProjectChange]);
 
-  return { status };
+  return { status, onlineUserIds };
 }

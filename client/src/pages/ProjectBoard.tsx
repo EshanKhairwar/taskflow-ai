@@ -15,6 +15,7 @@ import AiProjectCopilot from "../components/tasks/AiProjectCopilot";
 import TaskComments from "../components/tasks/TaskComments";
 import SmartSchedulePanel from "../components/tasks/SmartSchedulePanel";
 import TaskRecommendationPanel from "../components/tasks/TaskRecommendationPanel";
+import ProjectHealthPanel from "../components/dashboard/ProjectHealthPanel";
 
 import {
   getProjectMembers,
@@ -399,6 +400,8 @@ export default function ProjectBoard({
             </button>
           </div>
         </div>
+
+        <ProjectHealthPanel tasks={tasks} projectName={projectName} />
 
         <div className="mb-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm shadow-slate-900/[0.02] dark:border-slate-800 dark:bg-slate-900/70 sm:p-5">
           <div className="mb-2 flex items-center justify-between gap-3 text-sm">

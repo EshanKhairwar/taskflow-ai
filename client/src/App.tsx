@@ -47,6 +47,15 @@ import TeamTab from "./pages/TeamTab";
 import MyTasks from "./pages/MyTasks";
 import ProjectsTab from "./pages/ProjectsTab";
 
+function getTimeBasedGreeting(): string {
+  const hour = new Date().getHours();
+
+  if (hour >= 5 && hour < 12) return "Good morning";
+  if (hour >= 12 && hour < 17) return "Good afternoon";
+  if (hour >= 17 && hour < 21) return "Good evening";
+  return "Good night";
+}
+
 interface Project {
   _id?: string;
 
@@ -164,6 +173,15 @@ function formatRelativeTime(date?: string) {
 }
 
 export default function App() {
+  const [timeGreeting, setTimeGreeting] = useState<string>(getTimeBasedGreeting);
+
+  useEffect(() => {
+    // Update while the app stays open, so the greeting changes at the right time.
+    const updateGreeting = () => setTimeGreeting(getTimeBasedGreeting());
+    updateGreeting();
+    const intervalId = window.setInterval(updateGreeting, 60_000);
+    return () => window.clearInterval(intervalId);
+  }, []);
   // Verify the existing HTTP-only cookie before deciding which page to show.
   console.log("🚀 App component rendered. Checking authentication status...");
 
@@ -1617,7 +1635,7 @@ export default function App() {
                 </p>
 
                 <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-                  Good morning <span className="text-blue-500">✦</span>
+                  {timeGreeting} <span className="text-blue-500">✦</span>
                 </h1>
 
                 <p className="mt-2 text-sm text-slate-500">
